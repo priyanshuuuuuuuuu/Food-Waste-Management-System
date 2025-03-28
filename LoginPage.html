@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | FoodLoop</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <style>
+        .background-image {
+            position: relative;
+        }
+        
+        .background-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(21, 56, 24, 0.7), rgba(16, 40, 18, 0.6));
+            z-index: 1;
+        }
+        
+        .role-name {
+            position: absolute;
+            bottom: 50px;
+            left: 50px;
+            z-index: 2;
+            color: #ffffff;
+        }
+        
+        .role-name h1 {
+            font-size: 2.8em;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .role-name p {
+            font-size: 1.2em;
+            max-width: 80%;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left">
+            <div class="background-image">
+                <img src="Assets/Images/1.jpg" alt="Food Image">
+                <div class="role-name">
+                    <h1>Welcome Back</h1>
+                    <p>Log in to continue your journey toward sustainable food waste management</p>
+                </div>
+            </div>
+        </div>
+        <div class="right">
+            <div class="web-logo">
+                <h1>FoodLoop</h1>
+            </div>
+            <div class="login-form">
+                <h2>Login</h2>
+                <form>
+                    <div class="form-grid">
+                        <div class="input-box full-width">
+                            <label for="Email"><i class="fas fa-envelope"></i> Email</label>
+                            <input type="email" id="Email" placeholder="your@email.com" required>
+                        </div>
+                        <div class="input-box full-width">
+                            <label for="Password"><i class="fas fa-lock"></i> Password</label>
+                            <input type="password" id="Password" placeholder="" required>
+                        </div>
+                    </div>
+                    
+                    <div class="links-container">
+                        <div class="signup-link" style="text-align: right;">
+                            <a href="#">Forgot Password?</a>
+                        </div>
+                    </div>
+                    
+                    <div class="continue-button">
+                        <input type="submit" value="Login">
+                    </div>
+                    
+                    <div class="links-container">
+                        <div class="signup-link">Don't have an account? <a href="SignUp.html">Sign Up</a></div>
+                    </div>
+                    
+                    <div class="form-divider">
+                        <hr><span>Or login with</span><hr>
+                    </div>
+                    
+                    <div class="social-login">
+                        <button class="role-btn provider-btn" onclick="handleGoogleSignIn()">
+                            <img src="Assets/Images/Google Logo.png" alt="Google" style="width: 24px; height: 24px; margin-bottom: 5px;"> 
+                            Google
+                        </button>
+                        <button class="role-btn company-btn">
+                            <img src="Assets/Images/apple logo.png" alt="Apple" style="width: 24px; height: 24px; margin-bottom: 5px;"> 
+                            Apple
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

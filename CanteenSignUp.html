@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Provider SignUp - FoodLoop</title>
+    <link rel="stylesheet" href="canteenStyle.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+</head>
+<body>
+    <div class="container">
+        <div class="left">
+            <div class="background-image">
+                <img src="Assets/Images/canteen.jpg" alt="Canteen Image">
+            </div>
+        </div>
+        <div class="right">
+            <div class="web-logo">
+                <h1>FoodLoop</h1>
+            </div>
+            <div class="login-form">
+                <h2>Create a Food Provider Account</h2>
+                <p class="role-desc">For restaurants, canteens, hotels, and food vendors</p>
+                <form>
+                    <div class="input-box">
+                        <label for="BusinessName">Business Name</label>
+                        <input type="text" id="BusinessName" placeholder="Your restaurant or canteen name" required>
+                    </div>
+                    <div class="input-box">
+                        <label for="OwnerName">Owner/Manager Name</label>
+                        <input type="text" id="OwnerName" placeholder="Full name" required>
+                    </div>
+                    <div class="input-box">
+                        <label for="Phone">Contact Number</label>
+                        <input type="tel" id="Phone" placeholder="Business phone number" required>
+                    </div>
+                    <div class="input-box">
+                        <label for="Email">Business Email</label>
+                        <input type="email" id="Email" placeholder="Your email address" required>
+                    </div>
+                    <div class="input-box">
+                        <label for="Address">Business Address</label>
+                        <input type="text" id="Address" placeholder="Street address" required>
+                    </div>
+                    <div class="twin-input">
+                        <div class="input-box">
+                            <label for="City">City</label>
+                            <input type="text" id="City" required>
+                        </div>
+                        <div class="input-box">
+                            <label for="Pincode">Pin Code</label>
+                            <input type="text" id="Pincode" required>
+                        </div>
+                    </div>
+                    <div class="input-box">
+                        <label for="BusinessType">Business Type</label>
+                        <select id="BusinessType" required>
+                            <option value="" disabled selected>Select business type</option>
+                            <option value="restaurant">Restaurant</option>
+                            <option value="hotel">Hotel</option>
+                            <option value="canteen">Canteen</option>
+                            <option value="catering">Catering Service</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="password-container">
+                        <div class="input-box">
+                            <label for="Password">Password</label>
+                            <input type="password" id="Password" placeholder="Create a strong password">
+                        </div>
+                        <div class="input-box">
+                            <label for="ConfirmPassword">Confirm Password</label>
+                            <input type="password" id="ConfirmPassword" placeholder="Confirm your password">
+                        </div>
+                    </div>
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="terms" required>
+                        <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                    </div>
+                    <div class="continue-button">
+                        <input type="submit" value="Create Food Provider Account">
+                    </div>
+                    
+                    <div class="signUp">Already have an Account? <a href="LoginPage.html">Login</a></div>
+                    <div class="back-link"><a href="SignUp.html">&larr; Back to account types</a></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
