@@ -204,6 +204,7 @@ body {
     animation: fadeIn 1.5s ease forwards;
     animation-delay: 1s;
     opacity: 0;
+    text-decoration: none;
 }
 
 .cta-button:hover {

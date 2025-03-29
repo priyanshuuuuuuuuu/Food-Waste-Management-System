@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SignUp | FoodLoop</title>
+    <title>Sign Up | FoodLoop</title>
     <link rel="stylesheet" href="signupStyle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -11,11 +11,11 @@
     <div class="container">
         <div class="left">
             <div class="background-image">
-                <img src="Assets/Images/1.jpg" alt="Food Image">
+                <img src="Assets/Images/waste-management-bg.jpg" alt="FoodLoop Background">
             </div>
             <div class="role-name">
                 <h1>Join FoodLoop</h1>
-                <p>Create an account and help us build a sustainable food waste ecosystem</p>
+                <p>Select your role to get started on our sustainable food waste management platform</p>
             </div>
         </div>
         <div class="right">
@@ -23,81 +23,47 @@
                 <h1>FoodLoop</h1>
             </div>
             <div class="login-form">
-                <h2>Create an Account</h2>
-                <form>
-                    <div class="form-grid">
-                        <div class="input-box full-width">
-                            <label for="Fullname"><i class="fas fa-user"></i> Full Name</label>
-                            <input type="text" id="Fullname" placeholder="Enter your full name" required>
+                <h2>Choose Your Role</h2>
+                <p class="role-desc">Select the option that best describes you</p>
+                
+                <div class="role-cards">
+                    <a href="CanteenSignUp.html" class="role-card">
+                        <div class="role-icon">
+                            <i class="fas fa-utensils"></i>
                         </div>
-                        <div class="input-box">
-                            <label for="Phone"><i class="fas fa-phone"></i> Phone Number</label>
-                            <input type="tel" id="Phone" placeholder="e.g., 9876543210" required>
+                        <div class="role-details">
+                            <h3>Food Provider</h3>
+                            <p>For restaurants, canteens, hotels, and food vendors</p>
                         </div>
-                        <div class="input-box">
-                            <label for="Email"><i class="fas fa-envelope"></i> Email</label>
-                            <input type="email" id="Email" placeholder="your@email.com" required>
-                        </div>
-                        <div class="input-box full-width">
-                            <label for="UserRole"><i class="fas fa-user-tag"></i> I am a</label>
-                            <select id="UserRole" name="UserRole" required onchange="redirectToRoleSignup(this.value)">
-                                <option value="" disabled selected>Select your role</option>
-                                <option value="foodprovider">Food Provider</option>
-                                <option value="transporter">Transporter</option>
-                                <option value="company">Company</option>
-                            </select>
-                        </div>
-                        <div class="input-box">
-                            <label for="Password"><i class="fas fa-lock"></i> Password</label>
-                            <input type="password" id="Password" required>
-                        </div>
-                        <div class="input-box">
-                            <label for="ConfirmPassword"><i class="fas fa-lock"></i> Confirm Password</label>
-                            <input type="password" id="ConfirmPassword" required>
-                        </div>
-                    </div>
+                    </a>
                     
-                    <div class="continue-button">
-                        <input type="submit" value="Create Account">
-                    </div>
-                    
-                    <div class="links-container">
-                        <div class="signup-link">Already have an Account? <a href="LoginPage.html">Login</a></div>
-                    </div>
-                    
-                    <div class="form-divider">
-                        <hr><span>Or join as</span><hr>
-                    </div>
-                    
-                    <div class="role-buttons">
-                        <a href="providerSignUp.html" class="role-btn provider-btn">
-                            <i class="fas fa-store"></i>
-                            Food Provider
-                        </a>
-                        <a href="transporterSignUp.html" class="role-btn transporter-btn">
+                    <a href="transporterSignUp.html" class="role-card">
+                        <div class="role-icon">
                             <i class="fas fa-truck"></i>
-                            Transporter
-                        </a>
-                        <a href="companySignUp.html" class="role-btn company-btn">
+                        </div>
+                        <div class="role-details">
+                            <h3>Transporter</h3>
+                            <p>For logistics and transportation service providers</p>
+                        </div>
+                    </a>
+                    
+                    <a href="companySignUp.html" class="role-card">
+                        <div class="role-icon">
                             <i class="fas fa-industry"></i>
-                            Company
-                        </a>
-                    </div>
-                </form>
+                        </div>
+                        <div class="role-details">
+                            <h3>Company</h3>
+                            <p>For businesses that process food waste into valuable resources</p>
+                        </div>
+                    </a>
+                </div>
+                
+                <div class="links-container">
+                    <div class="signup-link">Already have an account? <a href="LoginPage.html">Login</a></div>
+                    <div class="back-link"><a href="MainPage.html">&larr; Back to home</a></div>
+                </div>
             </div>
         </div>
     </div>
-    
-    <script>
-        function redirectToRoleSignup(role) {
-            if (role === 'foodprovider') {
-                window.location.href = 'providerSignUp.html';
-            } else if (role === 'transporter') {
-                window.location.href = 'transporterSignUp.html';
-            } else if (role === 'company') {
-                window.location.href = 'companySignUp.html';
-            }
-        }
-    </script>
 </body>
 </html>

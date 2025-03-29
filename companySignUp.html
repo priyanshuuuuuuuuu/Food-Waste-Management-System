@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Company SignUp</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="signupStyle.css">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
     <script src="https://apis.google.com/js/platform.js" async defer></script>
@@ -22,7 +22,7 @@
             </div>
             <div class="login-form">
                 <h2>Register as Company</h2>
-                <form>
+                <form action="companyDashboard.html" method="POST"> <!-- Updated form action -->
                     <div class="input-box">
                         <label for="CompanyName">Company Name</label>
                         <input type="text" placeholder="e.g., EcoProcess Ltd." required>

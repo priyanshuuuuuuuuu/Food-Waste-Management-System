@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transporter Dashboard | FoodLoop</title>
+    <link rel="stylesheet" href="transporterDashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">FoodLoop</div>
+        <div class="nav-links">
+            <a href="#dashboard" class="active">Dashboard</a>
+            <a href="#routes">My Routes</a>
+            <a href="#schedule">Schedule</a>
+            <a href="#earnings">Earnings</a>
+        </div>
+        <div class="nav-profile">
+            <div class="notifications">
+                <i class="fas fa-bell"></i>
+                <span class="notification-count">2</span>
+            </div>
+            <div class="profile-dropdown">
+                <div class="profile-img">
+                    <img src="Assets/Images/transport-profile.jpg" alt="Transporter Profile">
+                </div>
+                <span>Swift Logistics</span>
+                <i class="fas fa-chevron-down"></i>
+                <div class="dropdown-menu">
+                    <a href="#profile"><i class="fas fa-user"></i> Profile</a>
+                    <a href="#settings"><i class="fas fa-cog"></i> Settings</a>
+                    <a href="MainPage.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard content would go here -->
+    
+    <script>
+        // Profile dropdown functionality
+        document.querySelector('.profile-dropdown').addEventListener('click', function() {
+            this.querySelector('.dropdown-menu').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

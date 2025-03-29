@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Food Provider SignUp - FoodLoop</title>
-    <link rel="stylesheet" href="canteenStyle.css">
+    <link rel="stylesheet" href="signupStyle.css">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <meta name="google-signin-client_id" content="YOUR_CLIENT_ID.apps.googleusercontent.com">
     <script src="https://apis.google.com/js/platform.js" async defer></script>
@@ -23,7 +23,7 @@
             <div class="login-form">
                 <h2>Create a Food Provider Account</h2>
                 <p class="role-desc">For restaurants, canteens, hotels, and food vendors</p>
-                <form>
+                <form action="providerDashboard.html" method="POST">
                     <div class="input-box">
                         <label for="BusinessName">Business Name</label>
                         <input type="text" id="BusinessName" placeholder="Your restaurant or canteen name" required>
@@ -84,7 +84,7 @@
                     </div>
                     
                     <div class="signUp">Already have an Account? <a href="LoginPage.html">Login</a></div>
-                    <div class="back-link"><a href="SignUp.html">&larr; Back to account types</a></div>
+                    <div class="signUp">Not a Food Provider? <a href="SignUp.html">Choose different role</a></div>
                 </form>
             </div>
         </div>

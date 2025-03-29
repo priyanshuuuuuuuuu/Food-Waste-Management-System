@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provider Dashboard | FoodLoop</title>
+    <link rel="stylesheet" href="providerDashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">FoodLoop</div>
+        <div class="nav-links">
+            <a href="#dashboard" class="active">Dashboard</a>
+            <a href="#listings">My Listings</a>
+            <a href="#pickups">Pickups</a>
+            <a href="#analytics">Analytics</a>
+        </div>
+        <div class="nav-profile">
+            <div class="notifications">
+                <i class="fas fa-bell"></i>
+                <span class="notification-count">5</span>
+            </div>
+            <div class="profile-dropdown">
+                <div class="profile-img">
+                    <img src="Assets/Images/provider-profile.jpg" alt="Provider Profile">
+                </div>
+                <span>Green Canteen</span>
+                <i class="fas fa-chevron-down"></i>
+                <div class="dropdown-menu">
+                    <a href="#profile"><i class="fas fa-user"></i> Profile</a>
+                    <a href="#settings"><i class="fas fa-cog"></i> Settings</a>
+                    <a href="MainPage.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <section class="welcome-section">
+            <div class="welcome-text">
+                <h1>Welcome, Green Canteen!</h1>
+                <p>Manage your food waste listings and track your environmental impact</p>
+            </div>
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fas fa-recycle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>215 kg</h3>
+                        <p>Waste Diverted This Month</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>3</h3>
+                        <p>Upcoming Pickups</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>4.7</h3>
+                        <p>Your Rating</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>710 kg</h3>
+                        <p>CO₂ Emissions Saved</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="main-content">
+            <div class="content-grid">
+                <div class="grid-item new-waste-listing">
+                    <div class="section-header">
+                        <h2>Add New Waste Listing</h2>
+                    </div>
+                    <form class="waste-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="wasteType">Waste Type</label>
+                                <select id="wasteType" required>
+                                    <option value="" disabled selected>Select waste type</option>
+                                    <option value="vegetable">Vegetable Scraps</option>
+                                    <option value="fruit">Fruit Peels</option>
+                                    <option value="oils">Used Cooking Oil</option>
+                                    <option value="grains">Grains & Starches</option>
+                                    <option value="dairy">Dairy Products</option>
+                                    <option value="mixed">Mixed Food Waste</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="quantity">Quantity (kg)</label>
+                                <input type="number" id="quantity" placeholder="e.g., 20" min="1" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="availableDate">Available From</label>
+                                <input type="date" id="availableDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="expiryDate">Best Before</label>
+                                <input type="date" id="expiryDate" required>
+                            </div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="description">Description</label>
+                            <textarea id="description" placeholder="Add any additional details about the waste..." rows="3"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="storage">Storage Condition</label>
+                                <select id="storage">
+                                    <option value="room">Room Temperature</option>
+                                    <option value="refrigerated">Refrigerated</option>
+                                    <option value="frozen">Frozen</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pickupWindow">Pickup Window</label>
+                                <select id="pickupWindow">
+                                    <option value="flexible">Flexible</option>
+                                    <option value="morning">Morning (8AM-12PM)</option>
+                                    <option value="afternoon">Afternoon (12PM-5PM)</option>
+                                    <option value="evening">Evening (5PM-9PM)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="submit-listing-btn">Submit Listing</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="grid-item current-listings">
+                    <div class="section-header">
+                        <h2>Active Listings</h2>
+                        <button class="view-all-btn">View All <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <div class="listings-container">
+                        <div class="listing-card">
+                            <div class="listing-header">
+                                <h3>Vegetable Scraps</h3>
+                                <span class="listing-status available">Available</span>
+                            </div>
+                            <div class="listing-details">
+                                <p><i class="fas fa-weight"></i> <strong>Quantity:</strong> 15 kg</p>
+                                <p><i class="fas fa-calendar"></i> <strong>Listed:</strong> Oct 10, 2023</p>
+                                <p><i class="fas fa-clock"></i> <strong>Best Before:</strong> Oct 13, 2023</p>
+                            </div>
+                            <div class="listing-footer">
+                                <span class="interested-companies"><i class="fas fa-building"></i> 3 companies interested</span>
+                                <button class="action-btn"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="listing-card">
+                            <div class="listing-header">
+                                <h3>Used Cooking Oil</h3>
+                                <span class="listing-status pending">Pickup Scheduled</span>
+                            </div>
+                            <div class="listing-details">
+                                <p><i class="fas fa-weight"></i> <strong>Quantity:</strong> 10 kg</p>
+                                <p><i class="fas fa-calendar"></i> <strong>Listed:</strong> Oct 8, 2023</p>
+                                <p><i class="fas fa-truck"></i> <strong>Pickup:</strong> Oct 12, 2023, Afternoon</p>
+                            </div>
+                            <div class="listing-footer">
+                                <span class="interested-companies"><i class="fas fa-building"></i> BioFuel Inc.</span>
+                                <button class="action-btn"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid-item upcoming-pickups">
+                    <div class="section-header">
+                        <h2>Upcoming Pickups</h2>
+                    </div>
+                    <div class="pickups-container">
+                        <div class="pickup-card">
+                            <div class="pickup-date">
+                                <span class="day">12</span>
+                                <span class="month">OCT</span>
+                            </div>
+                            <div class="pickup-details">
+                                <h3>BioFuel Inc.</h3>
+                                <p><i class="fas fa-truck"></i> Pickup Window: 1:00 PM - 3:00 PM</p>
+                                <p><i class="fas fa-recycle"></i> Used Cooking Oil - 10kg</p>
+                            </div>
+                            <div class="pickup-actions">
+                                <button class="reschedule-btn">Reschedule</button>
+                                <button class="details-btn">Details</button>
+                            </div>
+                        </div>
+                        
+                        <div class="pickup-card">
+                            <div class="pickup-date">
+                                <span class="day">15</span>
+                                <span class="month">OCT</span>
+                            </div>
+                            <div class="pickup-details">
+                                <h3>Green Composting Co.</h3>
+                                <p><i class="fas fa-truck"></i> Pickup Window: 9:00 AM - 11:00 AM</p>
+                                <p><i class="fas fa-recycle"></i> Vegetable Scraps - 15kg</p>
+                            </div>
+                            <div class="pickup-actions">
+                                <button class="reschedule-btn">Reschedule</button>
+                                <button class="details-btn">Details</button>
+                            </div>
+                        </div>
+                        
+                        <div class="pickup-card">
+                            <div class="pickup-date">
+                                <span class="day">18</span>
+                                <span class="month">OCT</span>
+                            </div>
+                            <div class="pickup-details">
+                                <h3>EcoProcess Ltd.</h3>
+                                <p><i class="fas fa-truck"></i> Pickup Window: 2:00 PM - 4:00 PM</p>
+                                <p><i class="fas fa-recycle"></i> Mixed Food Waste - 25kg</p>
+                            </div>
+                            <div class="pickup-actions">
+                                <button class="reschedule-btn">Reschedule</button>
+                                <button class="details-btn">Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid-item analytics-summary">
+                    <div class="section-header">
+                        <h2>Waste Analytics</h2>
+                        <button class="view-all-btn">Full Report <i class="fas fa-chart-line"></i></button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="wasteChart"></canvas>
+                    </div>
+                    <div class="analytics-stats">
+                        <div class="analytic-item">
+                            <h4>Total This Month</h4>
+                            <p class="value">215 kg</p>
+                            <p class="trend positive"><i class="fas fa-arrow-up"></i> 8% vs Last Month</p>
+                        </div>
+                        <div class="analytic-item">
+                            <h4>Most Recycled Type</h4>
+                            <p class="value">Vegetable Scraps</p>
+                            <p class="trend">42% of total waste</p>
+                        </div>
+                        <div class="analytic-item">
+                            <h4>Environmental Impact</h4>
+                            <p class="value">710 kg CO₂</p>
+                            <p class="trend positive"><i class="fas fa-arrow-up"></i> 10% vs Last Month</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid-item interested-companies">
+                    <div class="section-header">
+                        <h2>Companies Interested in Your Waste</h2>
+                    </div>
+                    <div class="companies-container">
+                        <div class="company-card">
+                            <div class="company-logo">
+                                <img src="Assets/Images/biogas-company.jpg" alt="BioPower">
+                            </div>
+                            <div class="company-info">
+                                <h3>BioPower Energy</h3>
+                                <p><i class="fas fa-recycle"></i> Interested in: Vegetable Scraps</p>
+                                <p><i class="fas fa-star"></i> Rating: 4.8/5</p>
+                            </div>
+                            <div class="company-actions">
+                                <button class="view-profile-btn">View Profile</button>
+                                <button class="contact-btn">Contact</button>
+                            </div>
+                        </div>
+                        
+                        <div class="company-card">
+                            <div class="company-logo">
+                                <img src="Assets/Images/compost-company.jpg" alt="Green Earth Composting">
+                            </div>
+                            <div class="company-info">
+                                <h3>Green Earth Composting</h3>
+                                <p><i class="fas fa-recycle"></i> Interested in: All Food Waste</p>
+                                <p><i class="fas fa-star"></i> Rating: 4.6/5</p>
+                            </div>
+                            <div class="company-actions">
+                                <button class="view-profile-btn">View Profile</button>
+                                <button class="contact-btn">Contact</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">FoodLoop</div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Platform</h4>
+                    <a href="#">Dashboard</a>
+                    <a href="#">My Listings</a>
+                    <a href="#">Analytics</a>
+                    <a href="#">Help Center</a>
+                </div>
+                <div class="footer-column">
+                    <h4>Legal</h4>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Cookie Policy</a>
+                </div>
+                <div class="footer-column">
+                    <h4>Connect</h4>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 FoodLoop. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script>
+        // Profile dropdown functionality
+        document.querySelector('.profile-dropdown').addEventListener('click', function() {
+            this.querySelector('.dropdown-menu').classList.toggle('active');
+        });
+
+        // Chart.js for waste analytics
+        const ctx = document.getElementById('wasteChart').getContext('2d');
+        const wasteChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+                datasets: [{
+                    label: 'Vegetable Scraps',
+                    data: [65, 90, 75, 81, 90],
+                    backgroundColor: 'rgba(21, 56, 24, 0.7)',
+                    borderColor: '#153818',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Used Oil',
+                    data: [45, 30, 40, 35, 50],
+                    backgroundColor: 'rgba(230, 168, 23, 0.7)',
+                    borderColor: '#e6a817',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Mixed Waste',
+                    data: [30, 50, 35, 60, 75],
+                    backgroundColor: 'rgba(111, 66, 193, 0.7)',
+                    borderColor: '#6f42c1',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Waste (kg)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Animation on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.grid-item, .stat-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            elements.forEach(element => {
+                observer.observe(element);
+            });
+        });
+    </script>
+</body>
+</html>

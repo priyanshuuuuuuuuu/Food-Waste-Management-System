@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Dashboard | FoodLoop</title>
+    <link rel="stylesheet" href="companyDashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">FoodLoop</div>
+        <div class="nav-links">
+            <a href="#dashboard" class="active">Dashboard</a>
+            <a href="#providers">Providers</a>
+            <a href="#orders">Orders</a>
+            <a href="#analytics">Analytics</a>
+        </div>
+        <div class="nav-profile">
+            <div class="notifications">
+                <i class="fas fa-bell"></i>
+                <span class="notification-count">3</span>
+            </div>
+            <div class="profile-dropdown">
+                <div class="profile-img">
+                    <img src="Assets/Images/company-profile.jpg" alt="Company Profile">
+                </div>
+                <span>EcoProcess Ltd</span>
+                <i class="fas fa-chevron-down"></i>
+                <div class="dropdown-menu">
+                    <a href="#profile"><i class="fas fa-user"></i> Profile</a>
+                    <a href="#settings"><i class="fas fa-cog"></i> Settings</a>
+                    <a href="MainPage.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <section class="welcome-section">
+            <div class="welcome-text">
+                <h1>Welcome, EcoProcess Ltd!</h1>
+                <p>Here's an overview of your food waste management activities</p>
+            </div>
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fas fa-recycle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>235 kg</h3>
+                        <p>Waste Processed Today</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>4</h3>
+                        <p>Upcoming Deliveries</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>4.8</h3>
+                        <p>Provider Rating</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>775 kg</h3>
+                        <p>CO₂ Emissions Saved</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="main-content">
+            <div class="content-grid">
+                <div class="grid-item providers-list">
+                    <div class="section-header">
+                        <h2>Food Providers</h2>
+                        <button class="view-all-btn">View All <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <div class="provider-cards">
+                        <div class="provider-card">
+                            <div class="provider-img">
+                                <img src="Assets/Images/c1.jpg" alt="Green Canteen">
+                                <span class="status available"></span>
+                            </div>
+                            <div class="provider-info">
+                                <h3>Green Canteen</h3>
+                                <p><i class="fas fa-map-marker-alt"></i> 3.5 km away</p>
+                                <div class="provider-tags">
+                                    <span class="tag">Organic Waste</span>
+                                    <span class="tag">250 kg avg/week</span>
+                                </div>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                    <span>4.5</span>
+                                </div>
+                            </div>
+                            <button class="order-btn">Request Waste</button>
+                        </div>
+                        <div class="provider-card">
+                            <div class="provider-img">
+                                <img src="Assets/Images/c2.jpg" alt="Royal Hotel">
+                                <span class="status available"></span>
+                            </div>
+                            <div class="provider-info">
+                                <h3>Royal Hotel</h3>
+                                <p><i class="fas fa-map-marker-alt"></i> 5.2 km away</p>
+                                <div class="provider-tags">
+                                    <span class="tag">Mixed Waste</span>
+                                    <span class="tag">400 kg avg/week</span>
+                                </div>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <span>4.0</span>
+                                </div>
+                            </div>
+                            <button class="order-btn">Request Waste</button>
+                        </div>
+                        <div class="provider-card">
+                            <div class="provider-img">
+                                <img src="Assets/Images/c3.jpeg" alt="Campus Dining">
+                                <span class="status unavailable"></span>
+                            </div>
+                            <div class="provider-info">
+                                <h3>Campus Dining</h3>
+                                <p><i class="fas fa-map-marker-alt"></i> 2.1 km away</p>
+                                <div class="provider-tags">
+                                    <span class="tag">Vegetable Scraps</span>
+                                    <span class="tag">350 kg avg/week</span>
+                                </div>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <span>4.8</span>
+                                </div>
+                            </div>
+                            <button class="order-btn inactive">Currently Unavailable</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid-item analytics-summary">
+                    <div class="section-header">
+                        <h2>Waste Analytics</h2>
+                        <button class="view-all-btn">Full Report <i class="fas fa-chart-line"></i></button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="wasteChart"></canvas>
+                    </div>
+                    <div class="analytics-stats">
+                        <div class="analytic-item">
+                            <h4>Total This Month</h4>
+                            <p class="value">1,850 kg</p>
+                            <p class="trend positive"><i class="fas fa-arrow-up"></i> 12% vs Last Month</p>
+                        </div>
+                        <div class="analytic-item">
+                            <h4>Avg. Processing Time</h4>
+                            <p class="value">1.2 days</p>
+                            <p class="trend negative"><i class="fas fa-arrow-down"></i> 0.3 days improved</p>
+                        </div>
+                        <div class="analytic-item">
+                            <h4>Total CO₂ Saved</h4>
+                            <p class="value">6,105 kg</p>
+                            <p class="trend positive"><i class="fas fa-arrow-up"></i> 15% vs Last Month</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid-item recent-orders">
+                    <div class="section-header">
+                        <h2>Recent Orders</h2>
+                        <button class="view-all-btn">Order History <i class="fas fa-history"></i></button>
+                    </div>
+                    <div class="orders-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Provider</th>
+                                    <th>Waste Type</th>
+                                    <th>Quantity</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#ORD-2305</td>
+                                    <td>Green Canteen</td>
+                                    <td>Organic Waste</td>
+                                    <td>120 kg</td>
+                                    <td><span class="status-badge delivered">Delivered</span></td>
+                                    <td><button class="action-btn">Details</button></td>
+                                </tr>
+                                <tr>
+                                    <td>#ORD-2304</td>
+                                    <td>Royal Hotel</td>
+                                    <td>Mixed Waste</td>
+                                    <td>200 kg</td>
+                                    <td><span class="status-badge in-transit">In Transit</span></td>
+                                    <td><button class="action-btn">Track</button></td>
+                                </tr>
+                                <tr>
+                                    <td>#ORD-2303</td>
+                                    <td>Campus Dining</td>
+                                    <td>Vegetable Scraps</td>
+                                    <td>150 kg</td>
+                                    <td><span class="status-badge processing">Processing</span></td>
+                                    <td><button class="action-btn">Details</button></td>
+                                </tr>
+                                <tr>
+                                    <td>#ORD-2302</td>
+                                    <td>Green Canteen</td>
+                                    <td>Organic Waste</td>
+                                    <td>100 kg</td>
+                                    <td><span class="status-badge delivered">Delivered</span></td>
+                                    <td><button class="action-btn">Details</button></td>
+                                </tr>
+                                <tr>
+                                    <td>#ORD-2301</td>
+                                    <td>Royal Hotel</td>
+                                    <td>Used Oil</td>
+                                    <td>50 kg</td>
+                                    <td><span class="status-badge delayed">Delayed</span></td>
+                                    <td><button class="action-btn">Track</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="grid-item special-requests">
+                    <div class="section-header">
+                        <h2>Special Requests</h2>
+                    </div>
+                    <div class="request-form">
+                        <div class="form-group">
+                            <label for="wasteType">Waste Type Needed</label>
+                            <select id="wasteType">
+                                <option value="" disabled selected>Select waste type</option>
+                                <option value="organic">Organic Waste</option>
+                                <option value="oil">Used Cooking Oil</option>
+                                <option value="vegetable">Vegetable Scraps</option>
+                                <option value="grains">Grains & Cereals</option>
+                                <option value="mixed">Mixed Food Waste</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity">Quantity Required (kg)</label>
+                            <input type="number" id="quantity" placeholder="e.g., 200">
+                        </div>
+                        <div class="form-group">
+                            <label for="timeframe">Delivery Timeframe</label>
+                            <select id="timeframe">
+                                <option value="" disabled selected>Select timeframe</option>
+                                <option value="urgent">Urgent (24 hours)</option>
+                                <option value="standard">Standard (2-3 days)</option>
+                                <option value="planned">Planned (1 week)</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="notes">Special Notes</label>
+                            <textarea id="notes" placeholder="Any specific requirements..."></textarea>
+                        </div>
+                        <button class="submit-request-btn">Submit Special Request</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">FoodLoop</div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Platform</h4>
+                    <a href="#">Dashboard</a>
+                    <a href="#">Providers</a>
+                    <a href="#">Orders</a>
+                    <a href="#">Support</a>
+                </div>
+                <div class="footer-column">
+                    <h4>Legal</h4>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Cookie Policy</a>
+                </div>
+                <div class="footer-column">
+                    <h4>Connect</h4>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 FoodLoop. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script>
+        // Profile dropdown functionality
+        document.querySelector('.profile-dropdown').addEventListener('click', function() {
+            this.querySelector('.dropdown-menu').classList.toggle('active');
+        });
+
+        // Chart.js for waste analytics
+        const ctx = document.getElementById('wasteChart').getContext('2d');
+        const wasteChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [{
+                    label: 'Organic Waste (kg)',
+                    data: [650, 900, 800, 1200, 1300, 1450, 1650],
+                    backgroundColor: 'rgba(21, 56, 24, 0.2)',
+                    borderColor: '#153818',
+                    borderWidth: 2,
+                    tension: 0.4
+                },
+                {
+                    label: 'Used Oil (kg)',
+                    data: [150, 200, 180, 250, 270, 300, 320],
+                    backgroundColor: 'rgba(230, 168, 23, 0.2)',
+                    borderColor: '#e6a817',
+                    borderWidth: 2,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Animation on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.grid-item, .stat-card, .provider-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            elements.forEach(element => {
+                observer.observe(element);
+            });
+        });
+    </script>
+</body>
+</html>
