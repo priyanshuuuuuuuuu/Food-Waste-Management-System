@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | FoodLoop</title>
+    <link rel="stylesheet" href="adminLogin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo">FoodLoop</div>
+                <div class="admin-badge">Admin Panel</div>
+            </div>
+            <div class="login-body">
+                <h1>Admin Login</h1>
+                <p class="login-description">Please enter your credentials to access the admin dashboard</p>
+                
+                <form id="adminLoginForm" action="adminDashboard.html" method="POST">
+                    <div class="input-group">
+                        <label for="adminUsername">Username</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="adminUsername" name="adminUsername" required>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="adminPassword">Password</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="adminPassword" name="adminPassword" required>
+                        </div>
+                    </div>
+                    
+                    <div class="input-options">
+                        <div class="remember-me">
+                            <input type="checkbox" id="rememberMe">
+                            <label for="rememberMe">Remember me</label>
+                        </div>
+                        <a href="#" class="forgot-password">Forgot password?</a>
+                    </div>
+                    
+                    <button type="submit" class="login-btn">Login to Admin Panel</button>
+                </form>
+                
+                <div class="security-note">
+                    <i class="fas fa-shield-alt"></i>
+                    <p>This area is restricted to authorized personnel only. All access attempts are monitored and logged.</p>
+                </div>
+            </div>
+            <div class="login-footer">
+                <a href="MainPage.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Website</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Set adminAuth flag in localStorage to maintain authentication
+            localStorage.setItem('adminAuth', 'true');
+            localStorage.setItem('adminLastLogin', new Date().toISOString());
+            
+            // Redirect to admin dashboard
+            window.location.href = 'adminDashboard.html';
+        });
+    </script>
+</body>
+</html>

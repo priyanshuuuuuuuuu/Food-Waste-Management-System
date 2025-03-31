@@ -26,6 +26,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.location.href = 'companyDashboard.html';
             } else if (email.includes('transport')) {
                 window.location.href = 'transporterDashboard.html';
+            } else if (email.includes('admin')) {
+                // Special case for admin login
+                const password = document.getElementById('Password').value;
+                if (password === 'adminSecure123') { // This should be checked server-side in production
+                    localStorage.setItem('adminAuth', 'true');
+                    window.location.href = 'adminDashboard.html';
+                } else {
+                    alert('Invalid admin credentials');
+                }
             } else {
                 window.location.href = 'providerDashboard.html';
             }
@@ -46,6 +55,13 @@ document.addEventListener('DOMContentLoaded', function() {
         animatedElements.forEach(element => {
             observer.observe(element);
         });
+    }
+    
+    // Admin access protection - check if authenticated
+    if (window.location.pathname.includes('adminDashboard.html')) {
+        if (!localStorage.getItem('adminAuth')) {
+            window.location.href = 'LoginPage.html';
+        }
     }
 });
 

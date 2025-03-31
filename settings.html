@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings | FoodLoop</title>
+    <link rel="stylesheet" href="settingsStyle.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">FoodLoop</div>
+        <div class="nav-links">
+            <a href="javascript:history.back()">Back to Dashboard</a>
+        </div>
+        <div class="nav-profile">
+            <div class="notifications">
+                <i class="fas fa-bell"></i>
+                <span class="notification-count">3</span>
+            </div>
+            <div class="profile-dropdown">
+                <div class="profile-img">
+                    <img src="Assets/Images/company-profile.jpg" alt="User Profile" id="profileImage">
+                </div>
+                <span id="userName">User Name</span>
+                <i class="fas fa-chevron-down"></i>
+                <div class="dropdown-menu">
+                    <a href="#profile"><i class="fas fa-user"></i> Profile</a>
+                    <a href="#settings" class="active"><i class="fas fa-cog"></i> Settings</a>
+                    <a href="MainPage.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="settings-container">
+        <div class="settings-sidebar">
+            <h3>Settings</h3>
+            <ul class="settings-menu">
+                <li class="active" data-tab="account"><i class="fas fa-user"></i> Account</li>
+                <li data-tab="notifications"><i class="fas fa-bell"></i> Notifications</li>
+                <li data-tab="privacy"><i class="fas fa-lock"></i> Privacy & Security</li>
+                <li data-tab="appearance"><i class="fas fa-palette"></i> Appearance</li>
+                <li data-tab="billing"><i class="fas fa-credit-card"></i> Billing</li>
+                <li data-tab="help"><i class="fas fa-question-circle"></i> Help & Support</li>
+            </ul>
+        </div>
+        
+        <div class="settings-content">
+            <!-- Account Settings -->
+            <div class="settings-tab active" id="account">
+                <h2>Account Settings</h2>
+                <div class="settings-section">
+                    <h3>Profile Information</h3>
+                    <form class="settings-form">
+                        <div class="form-row">
+                            <div class="profile-upload">
+                                <div class="profile-preview">
+                                    <img src="Assets/Images/company-profile.jpg" alt="Profile Preview">
+                                </div>
+                                <div class="upload-actions">
+                                    <button type="button" class="upload-btn"><i class="fas fa-upload"></i> Upload New Image</button>
+                                    <button type="button" class="remove-btn"><i class="fas fa-trash"></i> Remove</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="businessName">Business/Organization Name</label>
+                                <input type="text" id="businessName" value="EcoProcess Ltd">
+                            </div>
+                        </div>
+                        <div class="form-row two-columns">
+                            <div class="form-group">
+                                <label for="contactPerson">Contact Person</label>
+                                <input type="text" id="contactPerson" value="Rajesh Kumar">
+                            </div>
+                            <div class="form-group">
+                                <label for="contactRole">Role/Position</label>
+                                <input type="text" id="contactRole" value="Operations Manager">
+                            </div>
+                        </div>
+                        <div class="form-row two-columns">
+                            <div class="form-group">
+                                <label for="contactEmail">Email</label>
+                                <input type="email" id="contactEmail" value="operations@ecoprocess.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="contactPhone">Phone</label>
+                                <input type="tel" id="contactPhone" value="+91 98765 43210">
+                            </div>
+                        </div>
+                        <button type="submit" class="save-btn">Save Changes</button>
+                    </form>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>Business Information</h3>
+                    <form class="settings-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="businessAddress">Business Address</label>
+                                <input type="text" id="businessAddress" value="123 Green Street, Eco Park">
+                            </div>
+                        </div>
+                        <div class="form-row three-columns">
+                            <div class="form-group">
+                                <label for="businessCity">City</label>
+                                <input type="text" id="businessCity" value="Mumbai">
+                            </div>
+                            <div class="form-group">
+                                <label for="businessState">State</label>
+                                <input type="text" id="businessState" value="Maharashtra">
+                            </div>
+                            <div class="form-group">
+                                <label for="businessPincode">Pincode</label>
+                                <input type="text" id="businessPincode" value="400001">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="businessType">Business Type</label>
+                                <select id="businessType">
+                                    <option value="biogas">Biogas Production</option>
+                                    <option value="composting" selected>Composting</option>
+                                    <option value="animalFeed">Animal Feed Production</option>
+                                    <option value="biofuel">Biofuel Production</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="save-btn">Save Changes</button>
+                    </form>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>Change Password</h3>
+                    <form class="settings-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="currentPassword">Current Password</label>
+                                <input type="password" id="currentPassword">
+                            </div>
+                        </div>
+                        <div class="form-row two-columns">
+                            <div class="form-group">
+                                <label for="newPassword">New Password</label>
+                                <input type="password" id="newPassword">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm New Password</label>
+                                <input type="password" id="confirmPassword">
+                            </div>
+                        </div>
+                        <button type="submit" class="save-btn">Update Password</button>
+                    </form>
+                </div>
+                
+                <div class="settings-section danger-zone">
+                    <div class="danger-actions">
+                        <div class="danger-item">
+                            <div class="danger-info">
+                                <h4>Deactivate Account</h4>
+                                <p>Temporarily disable your account. You can reactivate it later.</p>
+                            </div>
+                            <button class="deactivate-btn">Deactivate</button>
+                        </div>
+                        <div class="danger-item">
+                            <div class="danger-info">
+                                <h4>Delete Account</h4>
+                                <p>Permanently delete your account and all your data. This action cannot be undone.</p>
+                            </div>
+                            <button class="delete-btn">Delete Account</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Notifications Settings -->
+            <div class="settings-tab" id="notifications">
+                <h2>Notification Settings</h2>
+                <div class="settings-section">
+                    <h3>Email Notifications</h3>
+                    <div class="notification-options">
+                        <div class="notification-option">
+                            <div class="option-info">
+                                <h4>New Order Notifications</h4>
+                                <p>Receive an email when a new waste collection is scheduled</p>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="notification-option">
+                            <div class="option-info">
+                                <h4>Delivery Confirmations</h4>
+                                <p>Receive an email when waste has been delivered</p>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="notification-option">
+                            <div class="option-info">
+                                <h4>Marketing Communications</h4>
+                                <p>Receive occasional updates about new features and promotions</p>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>Push Notifications</h3>
+                    <div class="notification-options">
+                        <div class="notification-option">
+                            <div class="option-info">
+                                <h4>Real-time Order Updates</h4>
+                                <p>Receive push notifications when your order status changes</p>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="notification-option">
+                            <div class="option-info">
+                                <h4>New Provider Availability</h4>
+                                <p>Get notified when new food providers join in your area</p>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>SMS Notifications</h3>
+                    <div class="notification-options">
+                        <div class="notification-option">
+                            <div class="option-info">
+                                <h4>Order Status Updates</h4>
+                                <p>Receive SMS notifications for critical order status changes</p>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <button class="save-btn wide-btn">Save Notification Preferences</button>
+            </div>
+            
+            <!-- Privacy & Security Settings -->
+            <div class="settings-tab" id="privacy">
+                <h2>Privacy & Security Settings</h2>
+                <!-- Privacy settings content -->
+            </div>
+            
+            <!-- Appearance Settings -->
+            <div class="settings-tab" id="appearance">
+                <h2>Appearance Settings</h2>
+                <!-- Appearance settings content -->
+            </div>
+            
+            <!-- Billing Settings -->
+            <div class="settings-tab" id="billing">
+                <h2>Billing Information</h2>
+                <!-- Billing settings content -->
+            </div>
+            
+            <!-- Help & Support Settings -->
+            <div class="settings-tab" id="help">
+                <h2>Help & Support</h2>
+                <!-- Help settings content -->
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">FoodLoop</div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Platform</h4>
+                    <a href="#">Dashboard</a>
+                    <a href="#">Providers</a>
+                    <a href="#">Orders</a>
+                    <a href="#">Support</a>
+                </div>
+                <div class="footer-column">
+                    <h4>Legal</h4>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Cookie Policy</a>
+                </div>
+                <div class="footer-column">
+                    <h4>Connect</h4>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 FoodLoop. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching functionality
+            const tabItems = document.querySelectorAll('.settings-menu li');
+            const tabContents = document.querySelectorAll('.settings-tab');
+            
+            tabItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    tabItems.forEach(tab => tab.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Add active class to current tab
+                    this.classList.add('active');
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Dropdown menu functionality
+            const profileDropdown = document.querySelector('.profile-dropdown');
+            profileDropdown.addEventListener('click', function() {
+                const dropdownMenu = this.querySelector('.dropdown-menu');
+                dropdownMenu.classList.toggle('active');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!profileDropdown.contains(e.target)) {
+                    profileDropdown.querySelector('.dropdown-menu').classList.remove('active');
+                }
+            });
+
+            // Detect user type and adjust UI accordingly (demo only)
+            const currentPath = window.location.pathname;
+            const userName = document.getElementById('userName');
+            const profileImage = document.getElementById('profileImage');
+            
+            if (document.referrer.includes('companyDashboard')) {
+                userName.textContent = 'EcoProcess Ltd';
+                profileImage.src = 'Assets/Images/company-profile.jpg';
+            } else if (document.referrer.includes('transporterDashboard')) {
+                userName.textContent = 'Swift Logistics';
+                profileImage.src = 'Assets/Images/transport-profile.jpg';
+            } else {
+                userName.textContent = 'Green Canteen';
+                profileImage.src = 'Assets/Images/provider-profile.jpg';
+            }
+        });
+    </script>
+</body>
+</html>

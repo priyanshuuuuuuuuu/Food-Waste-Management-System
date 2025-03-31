@@ -569,6 +569,7 @@ body {
     transition: all 0.3s ease;
     font-weight: 600;
     margin-top: 15px;
+    text-decoration: none;
 }
 
 .impact-cta:hover {

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | FoodLoop</title>
+    <link rel="stylesheet" href="contactStyle.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">FoodLoop</div>
+        <div class="nav-links">
+            <a href="MainPage.html">Home</a>
+            <a href="AboutUs.html">About Us</a>
+            <a href="contact.html" class="active">Contact</a>
+            <a href="SignUp.html">Join Us</a>
+        </div>
+        <div class="auth-links">
+            <a href="LoginPage.html" class="login-btn">Login</a>
+            <a href="SignUp.html" class="signup-btn">Sign Up</a>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <div class="container">
+            <h1>Contact Us</h1>
+            <p>Have questions or need assistance? We're here to help!</p>
+        </div>
+    </div>
+
+    <section class="contact-section">
+        <div class="container">
+            <div class="contact-wrapper">
+                <div class="contact-info">
+                    <h2>Get In Touch</h2>
+                    <p>We're always looking for new opportunities and partnerships. Reach out to our team using any of the methods below.</p>
+                    
+                    <div class="contact-method">
+                        <div class="icon-box">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="method-details">
+                            <h3>Our Location</h3>
+                            <p>123 Sustainability Street, Eco Park, Mumbai 400001</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-method">
+                        <div class="icon-box">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <div class="method-details">
+                            <h3>Phone Number</h3>
+                            <p>+91 98765 43210</p>
+                            <p>Mon - Fri: 9:00 AM - 6:00 PM</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-method">
+                        <div class="icon-box">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="method-details">
+                            <h3>Email Address</h3>
+                            <p>info@foodloop.org</p>
+                            <p>support@foodloop.org</p>
+                        </div>
+                    </div>
+                    
+                    <div class="social-links">
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="contact-form">
+                    <h2>Send Us a Message</h2>
+                    <form id="contactForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fullName">Full Name</label>
+                                <input type="text" id="fullName" name="fullName" placeholder="Your full name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" placeholder="Your email address" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" name="subject" placeholder="What is this regarding?" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" rows="6" placeholder="Tell us how we can help you" required></textarea>
+                        </div>
+                        
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="subscribe" name="subscribe">
+                            <label for="subscribe">Subscribe to our newsletter for updates on sustainable food practices</label>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">Send Message <i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="map-section">
+        <div class="container">
+            <h2>Visit Our Office</h2>
+            <div class="map-container">
+                <!-- Replace with actual Google Maps embed code -->
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d241317.1160984904!2d72.7409432784742!3d19.082177013259504!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c6306644edc1%3A0x5da4ed8f8d648c69!2sMumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1653032153143!5m2!1sen!2sin" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq-section">
+        <div class="container">
+            <h2>Frequently Asked Questions</h2>
+            <p class="section-description">Find answers to common questions about our service and platform.</p>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3>How does FoodLoop help reduce food waste?</h3>
+                        <span class="toggle-icon"><i class="fas fa-plus"></i></span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>FoodLoop connects food providers with excess food to companies that can process it into valuable resources. By creating this circular economy, we help divert food waste from landfills and turn it into useful products like compost, animal feed, or biogas.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3>How can my restaurant or food business join FoodLoop?</h3>
+                        <span class="toggle-icon"><i class="fas fa-plus"></i></span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Joining is simple! Click on the "Sign Up" button at the top of the page and select "Food Provider" as your role. Fill in your business details, and our team will guide you through the onboarding process. You'll be able to start listing your surplus food in no time.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3>What types of food waste can be processed through your platform?</h3>
+                        <span class="toggle-icon"><i class="fas fa-plus"></i></span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Our platform handles various types of food waste, including vegetable scraps, fruit peels, coffee grounds, used cooking oil, expired dairy products, stale bread, and more. Different processor companies on our platform specialize in handling specific types of food waste.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3>How are transportation logistics handled?</h3>
+                        <span class="toggle-icon"><i class="fas fa-plus"></i></span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>FoodLoop has a network of transportation partners who specialize in food waste collection. Once a match is made between a provider and processor, our system automatically schedules a pickup with the nearest available transporter, optimizing routes for efficiency and minimal environmental impact.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">FoodLoop</div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Platform</h4>
+                    <a href="MainPage.html">Home</a>
+                    <a href="AboutUs.html">About Us</a>
+                    <a href="contact.html">Contact</a>
+                    <a href="#">Food Providers</a>
+                </div>
+                <div class="footer-column">
+                    <h4>Legal</h4>
+                    <a href="legal.html?tab=terms">Terms of Service</a>
+                    <a href="legal.html?tab=privacy">Privacy Policy</a>
+                    <a href="#">Cookie Policy</a>
+                </div>
+                <div class="footer-column">
+                    <h4>Connect</h4>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 FoodLoop. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Form submission handler
+            const contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Simulate form submission
+                    alert('Thank you for your message! Our team will get back to you shortly.');
+                    contactForm.reset();
+                });
+            }
+            
+            // Accordion functionality
+            const accordionItems = document.querySelectorAll('.accordion-item');
+            accordionItems.forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                header.addEventListener('click', function() {
+                    item.classList.toggle('active');
+                    
+                    const toggleIcon = this.querySelector('.toggle-icon i');
+                    if (item.classList.contains('active')) {
+                        toggleIcon.classList.remove('fa-plus');
+                        toggleIcon.classList.add('fa-minus');
+                    } else {
+                        toggleIcon.classList.remove('fa-minus');
+                        toggleIcon.classList.add('fa-plus');
+                    }
+                });
+            });
+        });
+    </script> -->
+</body>
+</html>

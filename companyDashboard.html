@@ -21,6 +21,53 @@
             <div class="notifications">
                 <i class="fas fa-bell"></i>
                 <span class="notification-count">3</span>
+                <div class="notifications-dropdown">
+                    <div class="notifications-header">
+                        <h3>Notifications</h3>
+                        <button class="mark-all-read">Mark all as read</button>
+                    </div>
+                    <div class="notifications-list">
+                        <div class="notification-item unread">
+                            <div class="notification-icon new-request">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <div class="notification-content">
+                                <p class="notification-text"><strong>Green Canteen</strong> has a new waste listing that matches your requirements</p>
+                                <p class="notification-time">35 minutes ago</p>
+                            </div>
+                            <div class="notification-actions">
+                                <button class="notification-action"><i class="fas fa-eye"></i></button>
+                            </div>
+                        </div>
+                        <div class="notification-item unread">
+                            <div class="notification-icon delivery">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                            <div class="notification-content">
+                                <p class="notification-text">Your order <strong>#ORD-2304</strong> is in transit and will arrive today</p>
+                                <p class="notification-time">2 hours ago</p>
+                            </div>
+                            <div class="notification-actions">
+                                <button class="notification-action"><i class="fas fa-eye"></i></button>
+                            </div>
+                        </div>
+                        <div class="notification-item">
+                            <div class="notification-icon system">
+                                <i class="fas fa-cog"></i>
+                            </div>
+                            <div class="notification-content">
+                                <p class="notification-text">System maintenance scheduled for tonight at 2:00 AM</p>
+                                <p class="notification-time">1 day ago</p>
+                            </div>
+                            <div class="notification-actions">
+                                <button class="notification-action"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="notifications-footer">
+                        <a href="#all-notifications">View all notifications</a>
+                    </div>
+                </div>
             </div>
             <div class="profile-dropdown">
                 <div class="profile-img">
@@ -30,7 +77,7 @@
                 <i class="fas fa-chevron-down"></i>
                 <div class="dropdown-menu">
                     <a href="#profile"><i class="fas fa-user"></i> Profile</a>
-                    <a href="#settings"><i class="fas fa-cog"></i> Settings</a>
+                    <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
                     <a href="MainPage.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
             </div>
@@ -394,6 +441,59 @@
             
             elements.forEach(element => {
                 observer.observe(element);
+            });
+        });
+
+        // Notifications dropdown functionality
+        document.querySelector('.notifications').addEventListener('click', function(e) {
+            e.stopPropagation();
+            this.querySelector('.notifications-dropdown').classList.toggle('active');
+        });
+        
+        // Close notifications dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const notificationsDropdown = document.querySelector('.notifications-dropdown');
+            if (notificationsDropdown && notificationsDropdown.classList.contains('active') && 
+                !e.target.closest('.notifications-dropdown')) {
+                notificationsDropdown.classList.remove('active');
+            }
+        });
+        
+        // Mark all notifications as read
+        document.querySelector('.mark-all-read').addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.querySelectorAll('.notification-item.unread').forEach(item => {
+                item.classList.remove('unread');
+            });
+            const notificationCount = document.querySelector('.notification-count');
+            notificationCount.textContent = '0';
+            notificationCount.style.display = 'none';
+        });
+        
+        // Individual notification actions
+        document.querySelectorAll('.notification-action').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const notificationItem = this.closest('.notification-item');
+                if (notificationItem.classList.contains('unread')) {
+                    notificationItem.classList.remove('unread');
+                    const notificationCount = document.querySelector('.notification-count');
+                    const currentCount = parseInt(notificationCount.textContent);
+                    if (currentCount > 0) {
+                        notificationCount.textContent = currentCount - 1;
+                        if (currentCount - 1 === 0) {
+                            notificationCount.style.display = 'none';
+                        }
+                    }
+                }
+                // If it's the trash button, remove the notification
+                if (this.querySelector('.fa-trash-alt')) {
+                    notificationItem.style.height = '0';
+                    notificationItem.style.opacity = '0';
+                    setTimeout(() => {
+                        notificationItem.remove();
+                    }, 300);
+                }
             });
         });
     </script>
