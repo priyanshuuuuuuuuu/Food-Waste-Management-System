@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login | FoodLoop</title>
-    <link rel="stylesheet" href="adminLogin.css">
+    <link rel="stylesheet" href="style/adminLogin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -18,7 +18,7 @@
                 <h1>Admin Login</h1>
                 <p class="login-description">Please enter your credentials to access the admin dashboard</p>
                 
-                <form id="adminLoginForm" action="adminDashboard.html" method="POST">
+                <form id="adminLoginForm" action="AdminsDashboard.html" method="POST">
                     <div class="input-group">
                         <label for="adminUsername">Username</label>
                         <div class="input-with-icon">
@@ -56,17 +56,13 @@
             </div>
         </div>
     </div>
-
     <script>
         document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Set adminAuth flag in localStorage to maintain authentication
-            localStorage.setItem('adminAuth', 'true');
-            localStorage.setItem('adminLastLogin', new Date().toISOString());
+            const email = document.getElementById('Email').value;
             
-            // Redirect to admin dashboard
-            window.location.href = 'adminDashboard.html';
+            window.location.href = 'AdminsDashboard.html?email=' + encodeURIComponent(email);
         });
     </script>
 </body>
