@@ -18,7 +18,7 @@
                 <h1>Admin Login</h1>
                 <p class="login-description">Please enter your credentials to access the admin dashboard</p>
                 
-                <form id="adminLoginForm" action="adminDashboard.html" method="POST">
+                <form id="adminLoginForm" action="AdminsDashboard.html" method="POST">
                     <div class="input-group">
                         <label for="adminUsername">Username</label>
                         <div class="input-with-icon">
@@ -56,18 +56,6 @@
             </div>
         </div>
     </div>
-
-    <script>
-        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Set adminAuth flag in localStorage to maintain authentication
-            localStorage.setItem('adminAuth', 'true');
-            localStorage.setItem('adminLastLogin', new Date().toISOString());
-            
-            // Redirect to admin dashboard
-            window.location.href = 'adminDashboard.html';
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
