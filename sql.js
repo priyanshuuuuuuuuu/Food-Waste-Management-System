@@ -581,9 +581,7 @@ app.get('/api/getactivelistings', (req, res) => {
         return res.status(400).json({ message: 'Missing user_id' });
     }
 
-    console.log('Received request to get active listings for user:', user_id);
-
-    const providerQuery = 'SELECT provider_id FROM Provider WHERE user_id = ?';
+    const providerQuery = 'SELECT provider_id, rating, upcoming_pickups FROM Provider WHERE user_id = ?';
 
     db.query(providerQuery, [user_id], (err, providerResults) => {
         if (err) {
@@ -596,6 +594,11 @@ app.get('/api/getactivelistings', (req, res) => {
         }
 
         const provider_id = providerResults[0].provider_id;
+        const rating = providerResults[0].rating;
+        const upcoming_pickups = providerResults[0].upcoming_pickups;
+        console.log("Provider ID:", provider_id);
+        console.log("Rating:", rating);
+        console.log("Upcoming pickups:", upcoming_pickups);
 
         const listingsQuery = `
             SELECT listing_id, foodtype, quantity, listed_date, best_before, num_of_interest_companies
@@ -610,7 +613,11 @@ app.get('/api/getactivelistings', (req, res) => {
                 return res.status(500).json({ message: 'Failed to fetch listings' });
             }
 
-            res.json({ listings });
+            res.json({
+                listings,
+                rating: rating,
+                upcoming_pickups: upcoming_pickups
+            });
         });
     });
 });
