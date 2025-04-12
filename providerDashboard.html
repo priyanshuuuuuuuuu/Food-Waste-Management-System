@@ -442,6 +442,57 @@
             });
         });
 
+        const loadActiveListings = async () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            console.log(user);
+            if (!user) {
+                console.error('User not found in localStorage');
+                return;
+            }
+            const listingsContainer = document.querySelector('.listings-container');
+            listingsContainer.innerHTML = '<p>Loading listings...</p>';
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/getactivelistings?user_id=${user.user_id}`);
+                console.log("REACHEd");
+                const data = await response.json();
+
+                listingsContainer.innerHTML = ''; // Clear loading text
+
+                if (data.listings.length === 0) {
+                    listingsContainer.innerHTML = '<p>No active listings found.</p>';
+                    return;
+                }
+
+                data.listings.forEach(listing => {
+                    const card = document.createElement('div');
+                    card.className = 'listing-card';
+
+                    card.innerHTML = `
+                        <div class="listing-header">
+                            <h3>${listing.foodtype}</h3>
+                            <span class="listing-status available">Available</span>
+                        </div>
+                        <div class="listing-details">
+                            <p><i class="fas fa-weight"></i> <strong>Quantity:</strong> ${listing.quantity} kg</p>
+                            <p><i class="fas fa-calendar"></i> <strong>Listed:</strong> ${new Date(listing.listed_date).toDateString()}</p>
+                            <p><i class="fas fa-clock"></i> <strong>Best Before:</strong> ${new Date(listing.best_before).toDateString()}</p>
+                        </div>
+                        <div class="listing-footer">
+                            <span class="interested-companies"><i class="fas fa-building"></i> ${listing.num_of_interest_companies} companies interested</span>
+                            <button class="action-btn"><i class="fas fa-edit"></i></button>
+                            <button class="action-btn"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    `;
+
+                    listingsContainer.appendChild(card);
+                });
+            } catch (err) {
+                listingsContainer.innerHTML = '<p>Error loading listings.</p>';
+                console.error('Failed to fetch listings:', err);
+            }
+        };
+
         // Chart.js for waste analytics
         const ctx = document.getElementById('wasteChart').getContext('2d');
         const wasteChart = new Chart(ctx, {
@@ -525,7 +576,9 @@
                 }
             } catch (error) {
                 console.error('Error parsing user data from localStorage:', error);
-            }
+            };
+
+            loadActiveListings();
         });
 
         document.getElementById('wasteForm').addEventListener('submit', async (e) => {
@@ -554,6 +607,8 @@
                 console.error("Failed to submit listing:", error);
                 alert("Something went wrong.");
             }
+
+            loadActiveListings();
         });
 
     </script>
