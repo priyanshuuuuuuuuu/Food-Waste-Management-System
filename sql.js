@@ -17,7 +17,7 @@ app.use(express.static(__dirname));
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'Priyanshu123@',
+    password: 'Tiwari@142',
     database: 'FoodLoop'
 });
 
@@ -286,6 +286,15 @@ app.post('/api/login', (req, res) => {
                 redirectUrl = "defaultDashboard.html";
         }
 
-        res.status(200).json({ success: true, redirectUrl });
+        // res.status(200).json({ success: true, redirectUrl });
+        // Don't send password back
+        const { password: _, ...safeUser } = user;
+
+        res.status(200).json({ 
+            success: true, 
+            redirectUrl,
+            user: safeUser // send user info to frontend
+        });
+
     });
 });
