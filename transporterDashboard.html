@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"="width=device-width, initial-scale=1.0">
     <title>Transporter Dashboard | FoodLoop</title>
     <link rel="stylesheet" href="style/transporterDashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -588,6 +588,22 @@
             elements.forEach(element => {
                 observer.observe(element);
             });
+
+            // Fetch the transporter name from localStorage and update the DOM
+            try {
+                // Retrieve the user data from localStorage
+                const user = JSON.parse(localStorage.getItem('user'));
+
+                if (user && user.name) {
+                    // Update the transporter name in the DOM
+                    document.querySelector('.welcome-text h1').textContent = `Welcome, ${user.name}!`;
+                    document.querySelector('.profile-dropdown span').textContent = user.name;
+                } else {
+                    console.error('User data not found in localStorage');
+                }
+            } catch (error) {
+                console.error('Error parsing user data from localStorage:', error);
+            }
         });
     </script>
 </body>

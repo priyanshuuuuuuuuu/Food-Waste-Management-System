@@ -453,8 +453,133 @@
                     }
                 });
             });
+
+            // Delete account functionality
+            const deleteBtn = document.querySelector('.delete-btn');
+            const deleteModal = document.getElementById('deleteConfirmModal');
+            const closeModalBtn = document.querySelector('.close-modal');
+            const cancelBtn = document.querySelector('.cancel-btn');
+            const confirmDeleteBtn = document.querySelector('.confirm-delete-btn');
+            const confirmDeleteInput = document.getElementById('confirmDelete');
+            const deleteAccountName = document.getElementById('deleteAccountName');
+            const deleteAccountEmail = document.getElementById('deleteAccountEmail');
+            
+            // Show modal when delete button is clicked
+            deleteBtn.addEventListener('click', function() {
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (user) {
+                    deleteAccountName.textContent = user.name || 'Unknown';
+                    deleteAccountEmail.textContent = user.email || 'No email provided';
+                }
+                deleteModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            });
+            
+            // Close modal
+            function closeModal() {
+                deleteModal.style.display = 'none';
+                document.body.style.overflow = '';
+                confirmDeleteInput.value = '';
+                confirmDeleteBtn.disabled = true;
+            }
+            
+            closeModalBtn.addEventListener('click', closeModal);
+            cancelBtn.addEventListener('click', closeModal);
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                if (event.target === deleteModal) {
+                    closeModal();
+                }
+            });
+            
+            // Enable/disable delete button based on input
+            confirmDeleteInput.addEventListener('input', function() {
+                confirmDeleteBtn.disabled = this.value !== 'DELETE';
+            });
+            
+            // Handle account deletion
+            confirmDeleteBtn.addEventListener('click', async function() {
+                if (confirmDeleteInput.value !== 'DELETE') return;
+                
+                const user = JSON.parse(localStorage.getItem('user'));
+                const userId = user?.user_id;
+                
+                if (!userId) {
+                    alert('User ID not found. Please log in again.');
+                    window.location.href = 'LoginPage.html';
+                    return;
+                }
+                
+                try {
+                    // Show loading state
+                    confirmDeleteBtn.disabled = true;
+                    confirmDeleteBtn.textContent = 'Processing...';
+                    
+                    const response = await fetch('http://localhost:3000/api/deleteUser', {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ userId })
+                    });
+                    
+                    // Check if response is JSON
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        const result = await response.json();
+                        
+                        if (response.ok) {
+                            alert('Your account has been successfully deleted.');
+                            localStorage.removeItem('user'); // Clear user data
+                            window.location.href = 'MainPage.html'; // Redirect to main page
+                        } else {
+                            alert(`Failed to delete account: ${result.error}`);
+                            confirmDeleteBtn.disabled = false;
+                            confirmDeleteBtn.textContent = 'Delete Account';
+                        }
+                    } else {
+                        // Handle non-JSON response
+                        console.error('Server returned non-JSON response:', await response.text());
+                        alert('Server error occurred. Please try again later.');
+                        confirmDeleteBtn.disabled = false;
+                        confirmDeleteBtn.textContent = 'Delete Account';
+                    }
+                } catch (error) {
+                    console.error('Error deleting account:', error);
+                    alert('An error occurred while deleting your account.');
+                    confirmDeleteBtn.disabled = false;
+                    confirmDeleteBtn.textContent = 'Delete Account';
+                }
+            });
         });
     </script>
+
+    <!-- Add this HTML for the confirmation modal right before the closing </body> tag -->
+
+    <div id="deleteConfirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Delete Account</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed.</p>
+                <div class="account-details">
+                    <p><strong>Account:</strong> <span id="deleteAccountName"></span></p>
+                    <p><strong>Email:</strong> <span id="deleteAccountEmail"></span></p>
+                </div>
+                <div class="confirmation-input">
+                    <label for="confirmDelete">Please type "DELETE" to confirm:</label>
+                    <input type="text" id="confirmDelete" placeholder="DELETE">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn">Cancel</button>
+                <button class="confirm-delete-btn" disabled>Delete Account</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

@@ -6,6 +6,101 @@
     <title>Transportation SignUp | FoodLoop</title>
     <link rel="stylesheet" href="style/signupStyle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* GST verification popup styles */
+        .verification-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.1);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            visibility: hidden;
+            opacity: 0;
+            transition: transform 0.4s, opacity 0.4s;
+            z-index: 1000;
+            text-align: center;
+            min-width: 300px;
+        }
+
+        .verification-popup.active {
+            visibility: visible;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .popup-icon {
+            font-size: 50px;
+            color: #28a745;
+            margin-bottom: 15px;
+        }
+
+        .popup-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .popup-message {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .popup-close {
+            background-color: #153818;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .popup-close:hover {
+            background-color: #1f4f1f;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Styling for verified GST */
+        .verified-gst {
+            border-color: #28a745 !important;
+            background-color: rgba(40, 167, 69, 0.05) !important;
+        }
+        
+        .verified-indicator {
+            display: none;
+            color: #28a745;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .verified-indicator.active {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -57,6 +152,9 @@
                                 <input type="text" id="GSTNumber" name="GSTNumber" placeholder="Enter GST Number" required>
                                 <button type="button" id="VerifyGSTButton">Verify</button>
                             </div>
+                            <div class="verified-indicator">
+                                <i class="fas fa-check-circle"></i> GST Number verified
+                            </div>
                         </div>
                         <div class="input-box full-width">
                             <label for="Address"><i class="fas fa-map-marker-alt"></i> Business Address</label>
@@ -89,6 +187,81 @@
             </div>
         </div>
     </div>
+    
+    <!-- Add the verification popup and overlay -->
+    <div class="overlay" id="overlay"></div>
+    <div class="verification-popup" id="verificationPopup">
+        <div class="popup-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="popup-title">GST Verification Successful</div>
+        <div class="popup-message">The GST number has been verified successfully.</div>
+        <button class="popup-close" id="popupClose">Close</button>
+    </div>
+    
     <script src="js/script.js"></script>
+    <script>
+        // GST verification functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const verifyButton = document.getElementById('VerifyGSTButton');
+            const gstInput = document.getElementById('GSTNumber');
+            const verificationPopup = document.getElementById('verificationPopup');
+            const overlay = document.getElementById('overlay');
+            const popupClose = document.getElementById('popupClose');
+            const verifiedIndicator = document.querySelector('.verified-indicator');
+            
+            verifyButton.addEventListener('click', function() {
+                const gstNumber = gstInput.value.trim();
+                
+                if (!gstNumber) {
+                    alert('Please enter a GST number to verify');
+                    return;
+                }
+                
+                // Here we would typically make an API call to verify the GST
+                // For demonstration, we'll simulate a successful verification
+                
+                // Show loading state
+                verifyButton.textContent = 'Verifying...';
+                verifyButton.disabled = true;
+                
+                // Simulate API call with timeout
+                setTimeout(function() {
+                    // Mark input as verified
+                    gstInput.classList.add('verified-gst');
+                    verifiedIndicator.classList.add('active');
+                    
+                    // Show popup
+                    verificationPopup.classList.add('active');
+                    overlay.classList.add('active');
+                    
+                    // Reset button
+                    verifyButton.textContent = 'Verified';
+                    verifyButton.disabled = true;
+                    verifyButton.style.backgroundColor = '#28a745';
+                }, 1500);
+            });
+            
+            // Close popup when close button is clicked
+            popupClose.addEventListener('click', function() {
+                verificationPopup.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+            
+            // Close popup when clicking outside
+            overlay.addEventListener('click', function() {
+                verificationPopup.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+            
+            // Also close popup when pressing Escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && verificationPopup.classList.contains('active')) {
+                    verificationPopup.classList.remove('active');
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

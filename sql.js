@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const cors = require('cors');
 const saltRounds = 10;
 
+
 const app = express();
 app.use(cors());
 const port = 3000;
@@ -440,3 +441,99 @@ app.post('/api/updateUserDetails', (req, res) => {
         });
     });
 });
+
+// API endpoint to delete a user
+app.delete('/api/deleteUser', (req, res) => {
+    const { userId } = req.body;
+    
+    console.log('Received delete request with body:', req.body);
+    
+    if (!userId) {
+        return res.status(400).json({ error: 'User ID is required' });
+    }
+    
+    console.log('Delete request for user ID:', userId);
+    
+    // First, get the user's role to determine which related records to delete
+    const getUserQuery = 'SELECT role FROM User WHERE user_id = ?';
+    
+    db.query(getUserQuery, [userId], (err, results) => {
+        if (err) {
+            console.error('Error fetching user role:', err);
+            return res.status(500).json({ error: 'Failed to fetch user details' });
+        }
+        
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        
+        const role = results[0].role;
+        console.log(`Deleting user with role: ${role}`);
+        
+        // Begin transaction to ensure atomicity of the deletion process
+        db.beginTransaction(err => {
+            if (err) {
+                console.error('Error beginning transaction:', err);
+                return res.status(500).json({ error: 'Failed to begin transaction' });
+            }
+            
+            // Delete records based on user role
+            let roleSpecificDeleteQuery;
+            
+            if (role === 'FoodProvider') {
+                roleSpecificDeleteQuery = 'DELETE FROM Provider WHERE user_id = ?';
+            } else if (role === 'Company') {
+                roleSpecificDeleteQuery = 'DELETE FROM company WHERE user_id = ?';
+            } else if (role === 'Transporter') {
+                roleSpecificDeleteQuery = 'DELETE FROM Transporter WHERE user_id = ?';
+            } else {
+                return db.rollback(() => {
+                    res.status(400).json({ error: 'Invalid user role' });
+                });
+            }
+            
+            // Execute role-specific deletion
+            db.query(roleSpecificDeleteQuery, [userId], (err) => {
+                if (err) {
+                    console.error('Error deleting from role-specific table:', err);
+                    return db.rollback(() => {
+                        res.status(500).json({ error: 'Failed to delete user details' });
+                    });
+                }
+                
+                // Finally, delete from User table
+                const deleteUserQuery = 'DELETE FROM User WHERE user_id = ?';
+                db.query(deleteUserQuery, [userId], (err) => {
+                    if (err) {
+                        console.error('Error deleting user:', err);
+                        return db.rollback(() => {
+                            res.status(500).json({ error: 'Failed to delete user' });
+                        });
+                    }
+                    
+                    // Commit transaction if all operations successful
+                    db.commit(err => {
+                        if (err) {
+                            console.error('Error committing transaction:', err);
+                            return db.rollback(() => {
+                                res.status(500).json({ error: 'Failed to commit transaction' });
+                            });
+                        }
+                        
+                        console.log('User successfully deleted');
+                        res.status(200).json({
+                            success: true,
+                            message: 'User account successfully deleted'
+                        });
+                    });
+                });
+            });
+        });
+    });
+});
+
+
+//for the OTP genration in FOrgot password
+app.post('/send-otp',(req,res)=>{
+
+})
