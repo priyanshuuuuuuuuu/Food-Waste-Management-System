@@ -18,7 +18,7 @@ app.use(express.static(__dirname));
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'Priyanshu123@',
+    password: 'Tiwari@142',
     database: 'FoodLoop'
 });
 
@@ -537,3 +537,39 @@ app.delete('/api/deleteUser', (req, res) => {
 app.post('/send-otp',(req,res)=>{
 
 })
+
+app.post('/api/listing', (req, res) => {
+    const { quantity, foodtype, listed_date, best_before, id } = req.body;
+    console.log('Received request body:', req.body);
+
+    // Step 1: Get provider_id using user_id
+    const providerQuery = 'SELECT provider_id FROM Provider WHERE user_id = ?';
+
+    db.query(providerQuery, [id], (err, providerResults) => {
+        if (err) {
+            console.error("Error finding provider:", err);
+            return res.status(500).json({ message: 'Failed to fetch provider' });
+        }
+
+        if (providerResults.length === 0) {
+            return res.status(404).json({ message: 'Provider not found for this user' });
+        }
+
+        const provider_id = providerResults[0].provider_id;
+
+        const listingQuery = `
+            INSERT INTO Listing (quantity, foodtype, listed_date, best_before, provider_id)
+            VALUES (?, ?, ?, ?, ?)
+        `;
+        const values = [quantity, foodtype, listed_date, best_before, provider_id];
+
+        db.query(listingQuery, values, (err, result) => {
+            if (err) {
+                console.error("Error inserting listing:", err);
+                return res.status(500).json({ message: 'Failed to add listing' });
+            }
+
+            res.status(200).json({ message: 'Listing added successfully' });
+        });
+    });
+});
