@@ -22,68 +22,71 @@
             </div>
             <div class="login-form">
                 <h2>Register as Company</h2>
-                <form action="companyDashboard.html" method="POST"> <!-- Updated form action -->
+                <form action="http://localhost:3000/api/registerCompany" method="POST">
                     <div class="input-box">
                         <label for="CompanyName">Company Name</label>
-                        <input type="text" placeholder="e.g., EcoProcess Ltd." required>
+                        <input type="text" name="CompanyName" required>
                     </div>
                     <div class="input-box">
                         <label for="ContactPerson">Contact Person</label>
-                        <input type="text" placeholder="Full Name" required>
+                        <input type="text" name="ContactPerson" required>
                     </div>
                     <div class="input-box">
                         <label for="Phone">Phone Number</label>
-                        <input type="tel" placeholder="e.g., 9876543210" required>
+                        <input type="tel" name="Phone" required>
                     </div>
                     <div class="input-box">
                         <label for="Email">Email</label>
-                        <input type="email" placeholder="company@example.com" required>
+                        <input type="email" name="Email" required>
                     </div>
                     <div class="input-box">
                         <label for="IndustryType">Industry Type</label>
-                        <select id="IndustryType" name="IndustryType" required>
+                        <select name="IndustryType" required>
                             <option value="" disabled selected>Select your industry</option>
-                            <option value="biogas">Biogas Production</option>
-                            <option value="compost">Composting</option>
-                            <option value="animal">Animal Feed</option>
-                            <option value="biofuel">Biofuel Production</option>
-                            <option value="other">Other</option>
+                            <option value="Biogas Production">Biogas Production</option>
+                            <option value="Composting">Composting</option>
+                            <option value="Animal Feed">Animal Feed</option>
+                            <option value="Biofuel Production">Biofuel Production</option>
+                            <option value="Other">Other</option>
                         </select>
                     </div>
                     <div class="input-box">
                         <label for="WasteTypes">Waste Types Accepted</label>
-                        <select id="WasteTypes" name="WasteTypes" required>
+                        <select name="WasteTypes" required>
                             <option value="" disabled selected>Select waste types</option>
-                            <option value="all">All Food Waste</option>
-                            <option value="organic">Organic Waste Only</option>
-                            <option value="oils">Cooking Oils</option>
-                            <option value="grains">Grains and Cereals</option>
-                            <option value="mixed">Mixed Food Waste</option>
+                            <option value="All Food Waste">All Food Waste</option>
+                            <option value="Organic Waste Only">Organic Waste Only</option>
+                            <option value="Cooking Oils">Cooking Oils</option>
+                            <option value="Grains and Cereals">Grains and Cereals</option>
+                            <option value="Mixed Food Waste">Mixed Food Waste</option>
                         </select>
                     </div>
                     <div class="input-box">
                         <label for="Address">Company Address</label>
-                        <input type="text" placeholder="Full address" required>
+                        <input type="text" name="Address" required>
                     </div>
                     <div class="password-container">
                         <div class="input-box">
                             <label for="Password">Password</label>
-                            <input type="password" placeholder="" required>
+                            <input type="password" name="Password" required>
                         </div>
                         <div class="input-box">
                             <label for="ConfirmPassword">Confirm Password</label>
-                            <input type="password" placeholder="" required>
+                            <input type="password" name="ConfirmPassword" required>
                         </div>
                     </div>
                     <div class="continue-button">
                         <input type="submit" value="Create Company Account">
                     </div>
-                    
-                    <div class="links-container">
-                        <div class="signup-link">Already have an Account? <a href="LoginPage.html">Login</a></div>
-                        <div class="signup-link">Not a Transporter? <a href="SignUp.html">Choose different role</a></div>
-                    </div>
-                </form>
+            </form>
+                <div class="terms-checkbox">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">I agree to the <a href="legal.html?tab=terms">Terms of Service</a> and <a href="legal.html?tab=privacy">Privacy Policy</a></label>
+                </div>
+                <div class="google-signin">
+                    <div class="g_id_signin" data-type="standard"></div>
+                </div>
+
             </div>
         </div>
     </div>

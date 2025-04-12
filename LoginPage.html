@@ -107,21 +107,35 @@
             </div>
         </div>
     </div>
-    <script src="js/script.js"></script>
+    <!-- <script src="js/script.js"></script> -->
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // For demo purposes, just check the email domain
-            const email = document.getElementById('Email').value;
-            
-            if (email.includes('company')) {
-                window.location.href = 'companyDashboard.html';
-            } else if (email.includes('transport')) {
-                window.location.href = 'transporterDashboard.html';
-            } else {
-                window.location.href = 'providerDashboard.html';
-            }
+        document.getElementById("loginForm").addEventListener("submit", function (event) {
+            console.log("Ashu")
+            event.preventDefault();
+
+            const email = document.getElementById("Email").value;
+            const password = document.getElementById("Password").value;
+
+            fetch("http://localhost:3000/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ email, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Login successful!");
+                    window.location.href = data.redirectUrl;
+                } else {
+                    alert("Login failed: " + data.error);
+                }
+            })
+            .catch(error => {
+                console.error("Error during login:", error);
+                alert("An error occurred during login.");
+            });
         });
     </script>
 </body>
