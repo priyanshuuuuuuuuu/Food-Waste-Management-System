@@ -160,43 +160,46 @@
                     <div class="section-header">
                         <h2>Add New Waste Listing</h2>
                     </div>
-                    <form class="waste-form">
+                    <form class="waste-form" id="wasteForm">
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="wasteType">Waste Type</label>
-                                <select id="wasteType" required>
+                                <select id="wasteType" name="foodtype" required>
                                     <option value="" disabled selected>Select waste type</option>
-                                    <option value="vegetable">Vegetable Scraps</option>
-                                    <option value="fruit">Fruit Peels</option>
-                                    <option value="oils">Used Cooking Oil</option>
-                                    <option value="grains">Grains & Starches</option>
-                                    <option value="dairy">Dairy Products</option>
-                                    <option value="mixed">Mixed Food Waste</option>
+                                    <option value="Vegetable Scraps">Vegetable Scraps</option>
+                                    <option value="Fruit Peels">Fruit Peels</option>
+                                    <option value="Used Cooking Oil">Used Cooking Oil</option>
+                                    <option value="Grains & Starches">Grains & Starches</option>
+                                    <option value="Dairy Products">Dairy Products</option>
+                                    <option value="Mixed Food Waste">Mixed Food Waste</option>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label for="quantity">Quantity (kg)</label>
-                                <input type="number" id="quantity" placeholder="e.g., 20" min="1" required>
+                                <input type="number" id="quantity" name="quantity" placeholder="e.g., 20" min="1" required>
                             </div>
                         </div>
+
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="availableDate">Available From</label>
-                                <input type="date" id="availableDate" required>
+                                <input type="date" id="availableDate" name="listed_date" required>
                             </div>
                             <div class="form-group">
                                 <label for="expiryDate">Best Before</label>
-                                <input type="date" id="expiryDate" required>
+                                <input type="date" id="expiryDate" name="best_before" required>
                             </div>
                         </div>
+
                         <div class="form-group full-width">
                             <label for="description">Description</label>
-                            <textarea id="description" placeholder="Add any additional details about the waste..." rows="3"></textarea>
+                            <textarea id="description" name="description" placeholder="Add any additional details about the waste..." rows="3"></textarea>
                         </div>
+
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="storage">Storage Condition</label>
-                                <select id="storage">
+                                <select id="storage" name="storage">
                                     <option value="room">Room Temperature</option>
                                     <option value="refrigerated">Refrigerated</option>
                                     <option value="frozen">Frozen</option>
@@ -204,7 +207,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="pickupWindow">Pickup Window</label>
-                                <select id="pickupWindow">
+                                <select id="pickupWindow" name="pickupWindow">
                                     <option value="flexible">Flexible</option>
                                     <option value="morning">Morning (8AM-12PM)</option>
                                     <option value="afternoon">Afternoon (12PM-5PM)</option>
@@ -212,6 +215,7 @@
                                 </select>
                             </div>
                         </div>
+
                         <div class="form-group">
                             <button type="submit" class="submit-listing-btn">Submit Listing</button>
                         </div>
@@ -379,6 +383,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script>
+        
         // Profile dropdown functionality
         document.querySelector('.profile-dropdown').addEventListener('click', function() {
             this.querySelector('.dropdown-menu').classList.toggle('active');
@@ -522,6 +527,35 @@
                 console.error('Error parsing user data from localStorage:', error);
             }
         });
+
+        document.getElementById('wasteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = JSON.parse(localStorage.getItem('user'));
+            const user_id = user?.user_id;
+
+            const formData = {
+                foodtype: document.getElementById('wasteType').value,
+                quantity: document.getElementById('quantity').value,
+                listed_date: document.getElementById('availableDate').value,
+                best_before: document.getElementById('expiryDate').value,
+                id: user_id
+            };
+
+            try {
+                const response = await fetch('http://localhost:3000/api/listing', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData),
+                });
+
+                const result = await response.json();
+                alert(result.message);
+            } catch (error) {
+                console.error("Failed to submit listing:", error);
+                alert("Something went wrong.");
+            }
+        });
+
     </script>
 </body>
 </html>
