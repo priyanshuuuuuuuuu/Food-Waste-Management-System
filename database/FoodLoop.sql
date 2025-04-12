@@ -74,3 +74,34 @@ CREATE TABLE company (
     user_id INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES User(user_id)
 );
+
+CREATE TABLE waste_request (
+    request_id INT AUTO_INCREMENT PRIMARY KEY,
+    company_id INT,
+    listing_id INT,
+    status ENUM('requested', 'Pickup Scheduled', 'Completed') NOT NULL,
+
+    FOREIGN KEY (company_id) REFERENCES company(company_id),
+    FOREIGN KEY (listing_id) REFERENCES Listing(listing_id)
+);
+
+-- Pickup Table
+CREATE TABLE Pickup (
+    pickup_id INT AUTO_INCREMENT PRIMARY KEY,
+    provider_id INT,
+    company_id INT,
+    transporter_id INT,
+    listing_id INT,
+    request_id INT,
+    pickup_date DATE,
+    pickup_time TIME,
+    total_weight FLOAT,
+    distance DECIMAL(10,2),
+    status VARCHAR(50),
+
+    FOREIGN KEY (provider_id) REFERENCES provider(provider_id),
+    FOREIGN KEY (company_id) REFERENCES company(company_id),
+    FOREIGN KEY (transporter_id) REFERENCES transporter(transporter_id),
+    FOREIGN KEY (listing_id) REFERENCES listing(listing_id),
+    FOREIGN KEY (request_id) REFERENCES waste_request(request_id)
+);
