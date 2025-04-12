@@ -297,3 +297,146 @@ app.post('/api/login', (req, res) => {
         });
     });
 });
+
+// API endpoint to update user details
+app.post('/api/updateUserDetails', (req, res) => {
+    const {
+        userId,
+        businessName,
+        contactPerson,
+        contactRole,
+        contactEmail,
+        contactPhone,
+        businessAddress,
+        businessCity,
+        businessState,
+        businessPincode,
+        businessType,
+    } = req.body;
+
+    console.log('Received update request for user:', userId);
+    console.log('Update data:', req.body);
+
+    if (!userId) {
+        return res.status(400).json({ error: 'User ID is required' });
+    }
+
+    // Update the User table
+    const updateUserSql = `
+        UPDATE User
+        SET name = ?, email = ?, phone_number = ?, address = ?
+        WHERE user_id = ?
+    `;
+    
+    const fullAddress = [businessAddress, businessCity, businessState, businessPincode].filter(Boolean).join(', ');
+    const userValues = [businessName, contactEmail, contactPhone, fullAddress, userId];
+
+    db.query(updateUserSql, userValues, (err, result) => {
+        if (err) {
+            console.error('Error updating User table:', err);
+            return res.status(500).json({ error: 'Failed to update user details' });
+        }
+
+        // Get the user role
+        const getUserQuery = `SELECT role FROM User WHERE user_id = ?`;
+        db.query(getUserQuery, [userId], (err, results) => {
+            if (err || results.length === 0) {
+                console.error('Error fetching user role:', err);
+                return res.status(500).json({ error: 'Failed to fetch user role' });
+            }
+
+            const role = results[0].role;
+            
+            // Update role-specific table
+            if (role === 'Company') {
+                // Handle empty businessType - use a default value if empty
+                const industryType = businessType || 'Other'; // Use 'Other' as default if empty
+                
+                const updateCompanySql = `
+                    UPDATE company
+                    SET contact_person_name = ?, industry_type = ?
+                    WHERE user_id = ?
+                `;
+                const companyValues = [contactPerson || '', industryType, userId];
+
+                db.query(updateCompanySql, companyValues, (err) => {
+                    if (err) {
+                        console.error('Error updating Company table:', err);
+                        return res.status(500).json({ error: 'Failed to update company details' });
+                    }
+                    res.status(200).json({ 
+                        success: true, 
+                        message: 'Company details updated successfully',
+                        updatedUser: {
+                            name: businessName,
+                            email: contactEmail,
+                            phone_number: contactPhone,
+                            address: fullAddress,
+                            role: 'Company',
+                            contactPerson,
+                            businessType: industryType
+                        }
+                    });
+                });
+            } else if (role === 'FoodProvider') {
+                // Handle empty businessType for Provider
+                const businessTypeVal = businessType || 'Other';
+                
+                const updateProviderSql = `
+                    UPDATE Provider
+                    SET owner_name = ?, business_type = ?
+                    WHERE user_id = ?
+                `;
+                const providerValues = [contactPerson || '', businessTypeVal, userId];
+
+                db.query(updateProviderSql, providerValues, (err) => {
+                    if (err) {
+                        console.error('Error updating Provider table:', err);
+                        return res.status(500).json({ error: 'Failed to update provider details' });
+                    }
+                    res.status(200).json({ 
+                        success: true, 
+                        message: 'Provider details updated successfully',
+                        updatedUser: {
+                            name: businessName,
+                            email: contactEmail,
+                            phone_number: contactPhone,
+                            address: fullAddress,
+                            role: 'FoodProvider',
+                            contactPerson,
+                            businessType: businessTypeVal
+                        }
+                    });
+                });
+            } else if (role === 'Transporter') {
+                const updateTransporterSql = `
+                    UPDATE Transporter
+                    SET contact_person = ?
+                    WHERE user_id = ?
+                `;
+                const transporterValues = [contactPerson || '', userId];
+
+                db.query(updateTransporterSql, transporterValues, (err) => {
+                    if (err) {
+                        console.error('Error updating Transporter table:', err);
+                        return res.status(500).json({ error: 'Failed to update transporter details' });
+                    }
+                    res.status(200).json({ 
+                        success: true, 
+                        message: 'Transporter details updated successfully',
+                        updatedUser: {
+                            name: businessName,
+                            email: contactEmail,
+                            phone_number: contactPhone,
+                            address: fullAddress,
+                            role: 'Transporter',
+                            contactPerson
+                        }
+                    });
+                });
+            } else {
+                res.status(400).json({ error: 'Invalid user role' });
+            }
+        });
+    });
+});

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="style/settingsStyle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <nav class="navbar">
         <div class="logo">FoodLoop</div>
@@ -45,7 +47,7 @@
                 <li data-tab="help"><i class="fas fa-question-circle"></i> Help & Support</li>
             </ul>
         </div>
-        
+
         <div class="settings-content">
             <!-- Account Settings -->
             <div class="settings-tab active" id="account">
@@ -59,8 +61,10 @@
                                     <img src="Assets/Images/company-profile.jpg" alt="Profile Preview">
                                 </div>
                                 <div class="upload-actions">
-                                    <button type="button" class="upload-btn"><i class="fas fa-upload"></i> Upload New Image</button>
-                                    <button type="button" class="remove-btn"><i class="fas fa-trash"></i> Remove</button>
+                                    <button type="button" class="upload-btn"><i class="fas fa-upload"></i> Upload New
+                                        Image</button>
+                                    <button type="button" class="remove-btn"><i class="fas fa-trash"></i>
+                                        Remove</button>
                                 </div>
                             </div>
                         </div>
@@ -93,7 +97,7 @@
                         <button type="submit" class="save-btn">Save Changes</button>
                     </form>
                 </div>
-                
+
                 <div class="settings-section">
                     <h3>Business Information</h3>
                     <form class="settings-form">
@@ -121,17 +125,19 @@
                             <div class="form-group">
                                 <label for="businessType">Business Type</label>
                                 <select id="businessType">
-                                    <option value="biogas">Biogas Production</option>
-                                    <option value="composting" selected>Composting</option>
-                                    <option value="animalFeed">Animal Feed Production</option>
-                                    <option value="biofuel">Biofuel Production</option>
+                                    <option value="" disabled>Select a business type</option>
+                                    <option value="Biogas Production">Biogas Production</option>
+                                    <option value="Composting">Composting</option>
+                                    <option value="Animal Feed">Animal Feed</option>
+                                    <option value="Biofuel Production">Biofuel Production</option>
+                                    <option value="Other">Other</option>
                                 </select>
                             </div>
                         </div>
                         <button type="submit" class="save-btn">Save Changes</button>
                     </form>
                 </div>
-                
+
                 <div class="settings-section">
                     <h3>Change Password</h3>
                     <form class="settings-form">
@@ -154,7 +160,7 @@
                         <button type="submit" class="save-btn">Update Password</button>
                     </form>
                 </div>
-                
+
                 <div class="settings-section danger-zone">
                     <div class="danger-actions">
                         <div class="danger-item">
@@ -174,7 +180,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Notifications Settings -->
             <div class="settings-tab" id="notifications">
                 <h2>Notification Settings</h2>
@@ -213,7 +219,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="settings-section">
                     <h3>Push Notifications</h3>
                     <div class="notification-options">
@@ -239,7 +245,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="settings-section">
                     <h3>SMS Notifications</h3>
                     <div class="notification-options">
@@ -257,25 +263,25 @@
                 </div>
                 <button class="save-btn wide-btn">Save Notification Preferences</button>
             </div>
-            
+
             <!-- Privacy & Security Settings -->
             <div class="settings-tab" id="privacy">
                 <h2>Privacy & Security Settings</h2>
                 <!-- Privacy settings content -->
             </div>
-            
+
             <!-- Appearance Settings -->
             <div class="settings-tab" id="appearance">
                 <h2>Appearance Settings</h2>
                 <!-- Appearance settings content -->
             </div>
-            
+
             <!-- Billing Settings -->
             <div class="settings-tab" id="billing">
                 <h2>Billing Information</h2>
                 <!-- Billing settings content -->
             </div>
-            
+
             <!-- Help & Support Settings -->
             <div class="settings-tab" id="help">
                 <h2>Help & Support</h2>
@@ -283,7 +289,7 @@
             </div>
         </div>
     </div>
-    
+
     <footer>
         <div class="footer-content">
             <div class="footer-logo">FoodLoop</div>
@@ -318,33 +324,33 @@
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Tab switching functionality
             const tabItems = document.querySelectorAll('.settings-menu li');
             const tabContents = document.querySelectorAll('.settings-tab');
-            
+
             tabItems.forEach(item => {
-                item.addEventListener('click', function() {
+                item.addEventListener('click', function () {
                     // Remove active class from all tabs
                     tabItems.forEach(tab => tab.classList.remove('active'));
                     tabContents.forEach(content => content.classList.remove('active'));
-                    
+
                     // Add active class to current tab
                     this.classList.add('active');
                     const tabId = this.getAttribute('data-tab');
                     document.getElementById(tabId).classList.add('active');
                 });
             });
-            
+
             // Dropdown menu functionality
             const profileDropdown = document.querySelector('.profile-dropdown');
-            profileDropdown.addEventListener('click', function() {
+            profileDropdown.addEventListener('click', function () {
                 const dropdownMenu = this.querySelector('.dropdown-menu');
                 dropdownMenu.classList.toggle('active');
             });
-            
+
             // Close dropdown when clicking outside
-            document.addEventListener('click', function(e) {
+            document.addEventListener('click', function (e) {
                 if (!profileDropdown.contains(e.target)) {
                     profileDropdown.querySelector('.dropdown-menu').classList.remove('active');
                 }
@@ -384,7 +390,71 @@
             } catch (error) {
                 console.error('Error parsing user data from localStorage:', error);
             }
+
+            // Handle form submission for updating user details
+            const settingsForms = document.querySelectorAll('.settings-form');
+            settingsForms.forEach(form => {
+                form.addEventListener('submit', async function (event) {
+                    event.preventDefault(); // Prevent the default form submission
+
+                    // Get user ID from localStorage
+                    const user = JSON.parse(localStorage.getItem('user'));
+                    const userId = user?.user_id;
+
+                    if (!userId) {
+                        alert('User ID not found. Please log in again.');
+                        window.location.href = 'LoginPage.html';
+                        return;
+                    }
+
+                    // Collect updated data from all forms
+                    const updatedData = {
+                        userId: userId,
+                        businessName: document.getElementById('businessName').value,
+                        contactPerson: document.getElementById('contactPerson').value,
+                        contactRole: document.getElementById('contactRole').value,
+                        contactEmail: document.getElementById('contactEmail').value,
+                        contactPhone: document.getElementById('contactPhone').value,
+                        businessAddress: document.getElementById('businessAddress').value,
+                        businessCity: document.getElementById('businessCity').value,
+                        businessState: document.getElementById('businessState').value,
+                        businessPincode: document.getElementById('businessPincode').value,
+                        businessType: document.getElementById('businessType').value,
+                    };
+
+                    console.log('Sending updated data to backend:', updatedData);
+
+                    try {
+                        // Send the updated data to the backend
+                        const response = await fetch('http://localhost:3000/api/updateUserDetails', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(updatedData),
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok) {
+                            alert('Details updated successfully!');
+                            
+                            // Update localStorage with the new data
+                            if (result.updatedUser) {
+                                Object.assign(user, result.updatedUser);
+                                localStorage.setItem('user', JSON.stringify(user));
+                            }
+                        } else {
+                            alert(`Failed to update details: ${result.error}`);
+                        }
+                    } catch (error) {
+                        console.error('Error updating details:', error);
+                        alert('An error occurred while updating details.');
+                    }
+                });
+            });
         });
     </script>
 </body>
+
 </html>
