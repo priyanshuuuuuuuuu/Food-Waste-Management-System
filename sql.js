@@ -573,3 +573,44 @@ app.post('/api/listing', (req, res) => {
         });
     });
 });
+
+app.get('/api/getactivelistings', (req, res) => {
+    const user_id = req.query.user_id;
+
+    if (!user_id) {
+        return res.status(400).json({ message: 'Missing user_id' });
+    }
+
+    console.log('Received request to get active listings for user:', user_id);
+
+    const providerQuery = 'SELECT provider_id FROM Provider WHERE user_id = ?';
+
+    db.query(providerQuery, [user_id], (err, providerResults) => {
+        if (err) {
+            console.error("Error fetching provider_id:", err);
+            return res.status(500).json({ message: 'Server error' });
+        }
+
+        if (providerResults.length === 0) {
+            return res.status(404).json({ message: 'Provider not found' });
+        }
+
+        const provider_id = providerResults[0].provider_id;
+
+        const listingsQuery = `
+            SELECT listing_id, foodtype, quantity, listed_date, best_before, num_of_interest_companies
+            FROM Listing
+            WHERE provider_id = ? AND status = 'Active'
+            ORDER BY listed_date DESC
+        `;
+
+        db.query(listingsQuery, [provider_id], (err, listings) => {
+            if (err) {
+                console.error("Error fetching listings:", err);
+                return res.status(500).json({ message: 'Failed to fetch listings' });
+            }
+
+            res.json({ listings });
+        });
+    });
+});
