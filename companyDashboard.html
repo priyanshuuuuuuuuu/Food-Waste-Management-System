@@ -496,6 +496,24 @@
                 }
             });
         });
+
+        // Fetch the company name from localStorage and update the DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                // Retrieve the user data from localStorage
+                const user = JSON.parse(localStorage.getItem('user'));
+
+                if (user && user.name) {
+                    // Update the company name in the DOM
+                    document.querySelector('.welcome-text h1').textContent = `Welcome, ${user.name}!`;
+                    document.querySelector('.profile-dropdown span').textContent = user.name;
+                } else {
+                    console.error('User data not found in localStorage');
+                }
+            } catch (error) {
+                console.error('Error parsing user data from localStorage:', error);
+            }
+        });
     </script>
 </body>
 </html>

@@ -17,7 +17,7 @@ app.use(express.static(__dirname));
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'Tiwari@142',
+    password: 'Priyanshu123@',
     database: 'FoodLoop'
 });
 
@@ -295,6 +295,5 @@ app.post('/api/login', (req, res) => {
             redirectUrl,
             user: safeUser // send user info to frontend
         });
-
     });
 });

@@ -67,17 +67,17 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="businessName">Business/Organization Name</label>
-                                <input type="text" id="businessName" value="EcoProcess Ltd">
+                                <input type="text" id="businessName" value="">
                             </div>
                         </div>
                         <div class="form-row two-columns">
                             <div class="form-group">
                                 <label for="contactPerson">Contact Person</label>
-                                <input type="text" id="contactPerson" value="Rajesh Kumar">
+                                <input type="text" id="contactPerson" value="">
                             </div>
                             <div class="form-group">
                                 <label for="contactRole">Role/Position</label>
-                                <input type="text" id="contactRole" value="Operations Manager">
+                                <input type="text" id="contactRole" value="">
                             </div>
                         </div>
                         <div class="form-row two-columns">
@@ -350,20 +350,39 @@
                 }
             });
 
-            // Detect user type and adjust UI accordingly (demo only)
-            const currentPath = window.location.pathname;
-            const userName = document.getElementById('userName');
-            const profileImage = document.getElementById('profileImage');
-            
-            if (document.referrer.includes('companyDashboard')) {
-                userName.textContent = 'EcoProcess Ltd';
-                profileImage.src = 'Assets/Images/company-profile.jpg';
-            } else if (document.referrer.includes('transporterDashboard')) {
-                userName.textContent = 'Swift Logistics';
-                profileImage.src = 'Assets/Images/transport-profile.jpg';
-            } else {
-                userName.textContent = 'Green Canteen';
-                profileImage.src = 'Assets/Images/provider-profile.jpg';
+            // Fetch the user data from localStorage and populate the input fields
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+
+                if (user) {
+                    // Update the user name and profile image
+                    document.getElementById('userName').textContent = user.name;
+
+                    const profileImage = document.getElementById('profileImage');
+                    if (user.role === 'Transporter') {
+                        profileImage.src = 'Assets/Images/transport-profile.jpg';
+                    } else if (user.role === 'Company') {
+                        profileImage.src = 'Assets/Images/company-profile.jpg';
+                    } else {
+                        profileImage.src = 'Assets/Images/provider-profile.jpg';
+                    }
+
+                    // Populate the input fields dynamically
+                    document.getElementById('businessName').value = user.name || '';
+                    document.getElementById('contactPerson').value = user.contactPerson || '';
+                    document.getElementById('contactRole').value = user.role || '';
+                    document.getElementById('contactEmail').value = user.email || '';
+                    document.getElementById('contactPhone').value = user.phone_number || '';
+                    document.getElementById('businessAddress').value = user.address || '';
+                    document.getElementById('businessCity').value = user.city || '';
+                    document.getElementById('businessState').value = user.state || '';
+                    document.getElementById('businessPincode').value = user.pincode || '';
+                    document.getElementById('businessType').value = user.businessType || '';
+                } else {
+                    console.error('User data not found in localStorage');
+                }
+            } catch (error) {
+                console.error('Error parsing user data from localStorage:', error);
             }
         });
     </script>
