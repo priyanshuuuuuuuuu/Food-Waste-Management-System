@@ -497,7 +497,47 @@
             });
         });
 
-        // Function to load provider cards with an option to limit the number of listings
+        // Function to handle waste request
+        const handleWasteRequest = async (listingId) => {
+            try {
+                // Retrieve the user data from localStorage
+                const user = JSON.parse(localStorage.getItem('user'));
+
+                if (!user || user.role !== 'Company') {
+                    alert('Only companies can request waste. Please log in as a company.');
+                    return;
+                }
+
+                const companyId = user.company_id; // Ensure company_id is stored in localStorage
+
+                if (!companyId) {
+                    alert('Company ID not found. Please log in again.');
+                    return;
+                }
+
+                // Send the request to the backend
+                const response = await fetch('http://localhost:3000/api/requestWaste', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ companyId, listingId }),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('Waste request submitted successfully!');
+                } else {
+                    alert(`Failed to submit request: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Error submitting waste request:', error);
+                alert('An error occurred while submitting the request.');
+            }
+        };
+
+        // Modify the loadProviderCards function to include the "Request Waste" button functionality
         const loadProviderCards = async (limit = null) => {
             console.log('Loading provider cards...');
             const container = document.querySelector('.provider-cards');
@@ -543,7 +583,7 @@
                                 <span>${listing.rating}</span>
                             </div>
                         </div>
-                        <button class="order-btn">Request Waste</button>
+                        <button class="order-btn" onclick="handleWasteRequest(${listing.listing_id})">Request Waste</button>
                     `;
 
                     container.appendChild(card);

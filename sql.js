@@ -273,6 +273,8 @@ app.post('/api/login', (req, res) => {
 
         // Redirect based on role
         let redirectUrl;
+        let additionalData = {};
+
         switch (user.role) {
             case "FoodProvider":
                 redirectUrl = "providerDashboard.html";
@@ -282,19 +284,38 @@ app.post('/api/login', (req, res) => {
                 break;
             case "Company":
                 redirectUrl = "companyDashboard.html";
-                break;
+
+                // Fetch company_id for the logged-in company
+                const companyQuery = `SELECT company_id FROM company WHERE user_id = ?`;
+                db.query(companyQuery, [user.user_id], (err, companyResults) => {
+                    if (err) {
+                        console.error("Error fetching company_id:", err);
+                        return res.status(500).json({ error: "Failed to fetch company details" });
+                    }
+
+                    if (companyResults.length > 0) {
+                        additionalData.company_id = companyResults[0].company_id;
+                    }
+
+                    // Send response with company_id
+                    const { password: _, ...safeUser } = user;
+                    res.status(200).json({
+                        success: true,
+                        redirectUrl,
+                        user: { ...safeUser, ...additionalData }
+                    });
+                });
+                return; // Exit early for async query
             default:
                 redirectUrl = "defaultDashboard.html";
         }
 
-        // res.status(200).json({ success: true, redirectUrl });
-        // Don't send password back
+        // Send response for non-company roles
         const { password: _, ...safeUser } = user;
-
-        res.status(200).json({ 
-            success: true, 
+        res.status(200).json({
+            success: true,
             redirectUrl,
-            user: safeUser // send user info to frontend
+            user: { ...safeUser, ...additionalData }
         });
     });
 });
@@ -646,5 +667,28 @@ app.get('/api/activeprovidercards', (req, res) => {
             return res.status(500).json({ message: 'Server error' });
         }
         res.json({ listings: results });
+    });
+});
+
+// API endpoint to handle waste requests
+app.post('/api/requestWaste', (req, res) => {
+    const { companyId, listingId } = req.body;
+
+    if (!companyId || !listingId) {
+        return res.status(400).json({ message: 'Company ID and Listing ID are required' });
+    }
+
+    const query = `
+        INSERT INTO waste_request (company_id, listing_id, status)
+        VALUES (?, ?, 'requested')
+    `;
+
+    db.query(query, [companyId, listingId], (err, result) => {
+        if (err) {
+            console.error('Error inserting waste request:', err);
+            return res.status(500).json({ message: 'Failed to submit waste request' });
+        }
+
+        res.status(200).json({ message: 'Waste request submitted successfully' });
     });
 });
