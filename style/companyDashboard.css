@@ -599,42 +599,27 @@ body {
 
 .provider-cards {
     display: flex;
+    flex-wrap: wrap;
     gap: 20px;
-    overflow-x: auto;
-    padding: 5px 0 15px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary-light) transparent;
-}
-
-.provider-cards::-webkit-scrollbar {
-    height: 6px;
-}
-
-.provider-cards::-webkit-scrollbar-thumb {
-    background-color: var(--primary-light);
-    border-radius: 6px;
+    padding: 10px 0;
+    justify-content: center;
 }
 
 .provider-card {
-    flex: 0 0 calc(33.333% - 20px);
-    min-width: 300px;
-    background-color: var(--white);
+    flex: 0 0 calc(33.33% - 20px);
+    min-width: 280px;
     border-radius: 12px;
     overflow: hidden;
-    border: 1px solid #eee;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    transform: translateY(20px);
-}
-
-.provider-card.animate-in {
-    animation: fadeInUp 0.8s forwards;
-    animation-delay: calc(var(--i) * 0.2s);
+    margin-bottom: 20px;
+    animation: fadeIn 0.5s ease;
 }
 
 .provider-card:hover {
     transform: translateY(-5px);
-    box-shadow: var(--shadow);
-    border-color: transparent;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .provider-img {
@@ -647,26 +632,6 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-}
-
-.status {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background-color: var(--green);
-    border: 2px solid white;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
-}
-
-.status.available {
-    background-color: var(--green);
-}
-
-.status.unavailable {
-    background-color: var(--red);
 }
 
 .provider-info {
@@ -740,6 +705,18 @@ body {
     background-color: #ddd;
     color: var(--text-light);
     cursor: not-allowed;
+}
+
+/* Animation for fade-in effect */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Analytics Summary */
@@ -1153,8 +1130,6 @@ footer {
 .grid-item.animate-in {
     animation: fadeInUp 0.5s forwards;
 }
-
-
 
 .provider-card.animate-in {
     animation: fadeInUp 0.5s forwards;

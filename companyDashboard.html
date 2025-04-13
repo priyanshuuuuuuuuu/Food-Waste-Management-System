@@ -497,7 +497,8 @@
             });
         });
 
-        const loadProviderCards = async () => {
+        // Function to load provider cards with an option to limit the number of listings
+        const loadProviderCards = async (limit = null) => {
             console.log('Loading provider cards...');
             const container = document.querySelector('.provider-cards');
             container.innerHTML = '<p>Loading...</p>';
@@ -514,7 +515,10 @@
                     return;
                 }
 
-                listings.forEach((listing, index) => {
+                // Limit the number of listings displayed if a limit is provided
+                const limitedListings = limit ? listings.slice(0, limit) : listings;
+
+                limitedListings.forEach((listing, index) => {
                     const card = document.createElement('div');
                     card.classList.add('provider-card');
 
@@ -550,6 +554,11 @@
             }
         };
 
+        // Add event listener to the "View All" button
+        document.querySelector('.view-all-btn').addEventListener('click', () => {
+            loadProviderCards(); // Load all provider listings
+        });
+
         // Fetch the company name from localStorage and update the DOM
         document.addEventListener('DOMContentLoaded', () => {
             try {
@@ -563,7 +572,9 @@
                 } else {
                     console.error('User data not found in localStorage');
                 }
-                loadProviderCards();
+
+                // Initially load only 3 provider listings
+                loadProviderCards(3);
             } catch (error) {
                 console.error('Error parsing user data from localStorage:', error);
             }
