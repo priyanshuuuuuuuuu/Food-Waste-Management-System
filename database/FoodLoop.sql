@@ -85,7 +85,6 @@ CREATE TABLE waste_request (
     FOREIGN KEY (listing_id) REFERENCES Listing(listing_id)
 );
 
--- Pickup Table
 CREATE TABLE Pickup (
     pickup_id INT AUTO_INCREMENT PRIMARY KEY,
     provider_id INT,

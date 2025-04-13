@@ -621,3 +621,30 @@ app.get('/api/getactivelistings', (req, res) => {
         });
     });
 });
+app.get('/api/activeprovidercards', (req, res) => {
+    const query = `
+        SELECT 
+            l.listing_id,
+            l.quantity,
+            l.foodtype,
+            l.listed_date,
+            p.rating,
+            p.provider_id,
+            p.owner_name,
+            u.name AS provider_name,
+            u.address,
+            u.phone_number
+        FROM Listing l 
+        JOIN Provider p ON l.provider_id = p.provider_id
+        JOIN User u ON p.user_id = u.user_id
+        WHERE l.status = 'Active'
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("Error fetching active provider listings:", err);
+            return res.status(500).json({ message: 'Server error' });
+        }
+        res.json({ listings: results });
+    });
+});

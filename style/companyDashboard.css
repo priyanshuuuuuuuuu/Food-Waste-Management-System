@@ -623,7 +623,6 @@ body {
     overflow: hidden;
     border: 1px solid #eee;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    /* opacity: 0; */
     transform: translateY(20px);
 }
 
@@ -1154,6 +1153,7 @@ footer {
 .grid-item.animate-in {
     animation: fadeInUp 0.5s forwards;
 }
+
 
 
 .provider-card.animate-in {

@@ -138,8 +138,75 @@
                         <button class="view-all-btn">View All <i class="fas fa-arrow-right"></i></button>
                     </div>
                     <div class="provider-cards">
-                        <!-- Provider cards will be loaded dynamically here -->
-                        <p class="loading-text">Loading providers...</p>
+                        <div class="provider-card">
+                            <div class="provider-img">
+                                <img src="Assets/Images/c1.jpg" alt="Green Canteen">
+                                <span class="status available"></span>
+                            </div>
+                            <div class="provider-info">
+                                <h3>Green Canteen</h3>
+                                <p><i class="fas fa-map-marker-alt"></i> 3.5 km away</p>
+                                <div class="provider-tags">
+                                    <span class="tag">Organic Waste</span>
+                                    <span class="tag">250 kg avg/week</span>
+                                </div>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                    <span>4.5</span>
+                                </div>
+                            </div>
+                            <button class="order-btn">Request Waste</button>
+                        </div>
+                        <div class="provider-card">
+                            <div class="provider-img">
+                                <img src="Assets/Images/c2.jpg" alt="Royal Hotel">
+                                <span class="status available"></span>
+                            </div>
+                            <div class="provider-info">
+                                <h3>Royal Hotel</h3>
+                                <p><i class="fas fa-map-marker-alt"></i> 5.2 km away</p>
+                                <div class="provider-tags">
+                                    <span class="tag">Mixed Waste</span>
+                                    <span class="tag">400 kg avg/week</span>
+                                </div>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <span>4.0</span>
+                                </div>
+                            </div>
+                            <button class="order-btn">Request Waste</button>
+                        </div>
+                        <div class="provider-card">
+                            <div class="provider-img">
+                                <img src="Assets/Images/c3.jpeg" alt="Campus Dining">
+                                <span class="status unavailable"></span>
+                            </div>
+                            <div class="provider-info">
+                                <h3>Campus Dining</h3>
+                                <p><i class="fas fa-map-marker-alt"></i> 2.1 km away</p>
+                                <div class="provider-tags">
+                                    <span class="tag">Vegetable Scraps</span>
+                                    <span class="tag">350 kg avg/week</span>
+                                </div>
+                                <div class="rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <span>4.8</span>
+                                </div>
+                            </div>
+                            <button class="order-btn inactive">Currently Unavailable</button>
+                        </div>
                     </div>
                 </div>
                 
@@ -430,6 +497,59 @@
             });
         });
 
+        const loadProviderCards = async () => {
+            console.log('Loading provider cards...');
+            const container = document.querySelector('.provider-cards');
+            container.innerHTML = '<p>Loading...</p>';
+
+            try {
+                const response = await fetch('http://localhost:3000/api/activeprovidercards');
+                const data = await response.json();
+                const listings = data.listings;
+
+                container.innerHTML = '';
+
+                if (listings.length === 0) {
+                    container.innerHTML = '<p>No active providers available.</p>';
+                    return;
+                }
+
+                listings.forEach((listing, index) => {
+                    const card = document.createElement('div');
+                    card.classList.add('provider-card');
+
+                    card.innerHTML = `
+                        <div class="provider-img">
+                            <img src="Assets/Images/c${(index % 3) + 1}.jpg" alt="${listing.provider_name}">
+                            <span class="status available"></span>
+                        </div>
+                        <div class="provider-info">
+                            <h3>${listing.provider_name}</h3>
+                            <p><i class="fas fa-map-marker-alt"></i> ${listing.address}</p>
+                            <div class="provider-tags">
+                                <span class="tag">${listing.foodtype}</span>
+                                <span class="tag">${listing.quantity} avg/week</span>
+                            </div>
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <span>${listing.rating}</span>
+                            </div>
+                        </div>
+                        <button class="order-btn">Request Waste</button>
+                    `;
+
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error loading provider cards:', error);
+                container.innerHTML = '<p>Error loading data.</p>';
+            }
+        };
+
         // Fetch the company name from localStorage and update the DOM
         document.addEventListener('DOMContentLoaded', () => {
             try {
@@ -443,320 +563,11 @@
                 } else {
                     console.error('User data not found in localStorage');
                 }
+                loadProviderCards();
             } catch (error) {
                 console.error('Error parsing user data from localStorage:', error);
             }
         });
-
-        // Fetch active listings from providers
-        async function loadActiveListings() {
-            const providerCardsContainer = document.querySelector('.provider-cards');
-            providerCardsContainer.innerHTML = '<p class="loading-text">Loading providers...</p>';
-            
-            try {
-                console.log("Fetching active listings...");
-                const response = await fetch('http://localhost:3000/api/getActiveListingsForCompanies');
-                
-                // Better error handling for non-JSON responses
-                if (!response.ok) {
-                    const text = await response.text();
-                    console.error("API Error:", text);
-                    throw new Error(`API returned status ${response.status}`);
-                }
-                
-                const data = await response.json();
-                console.log("Received data:", data);
-                
-                if (!data.listings || data.listings.length === 0) {
-                    providerCardsContainer.innerHTML = '<p class="no-results">No active listings found.</p>';
-                    return;
-                }
-                
-                // Clear the container
-                providerCardsContainer.innerHTML = '';
-                
-                // Group listings by provider
-                const providersMap = new Map();
-                
-                data.listings.forEach(listing => {
-                    if (!providersMap.has(listing.provider_id)) {
-                        providersMap.set(listing.provider_id, {
-                            id: listing.provider_id,
-                            name: listing.provider_name || 'Unknown',
-                            contactPerson: listing.owner_name || 'Not specified',
-                            address: listing.address || 'No address',
-                            phone: listing.phone_number || 'No phone',
-                            distance: listing.distance || '5.0',
-                            listings: []
-                        });
-                    }
-                    providersMap.get(listing.provider_id).listings.push(listing);
-                });
-                
-                console.log("Grouped providers:", providersMap);
-                
-                // Create and append provider cards
-                providersMap.forEach(provider => {
-                    // Calculate the dominant food type
-                    const foodTypes = {};
-                    provider.listings.forEach(listing => {
-                        foodTypes[listing.foodtype] = (foodTypes[listing.foodtype] || 0) + 1;
-                    });
-                    
-                    const dominantType = Object.keys(foodTypes).reduce((a, b) => 
-                        foodTypes[a] > foodTypes[b] ? a : b, Object.keys(foodTypes)[0]);
-                    
-                    // Calculate average quantity
-                    const totalQuantity = provider.listings.reduce((sum, listing) => 
-                        sum + parseInt(listing.quantity || 0), 0);
-                    const avgQuantity = Math.round(totalQuantity / provider.listings.length);
-                    
-                    // Determine image based on waste type
-                    let imageUrl = 'Assets/Images/c1.jpg'; // Default
-                    if (dominantType && dominantType.includes('Oil')) {
-                        imageUrl = 'Assets/Images/c2.jpg';
-                    } else if (dominantType && dominantType.includes('Mixed')) {
-                        imageUrl = 'Assets/Images/c3.jpeg';
-                    }
-                    
-                    const card = document.createElement('div');
-                    card.className = 'provider-card';
-                    card.innerHTML = `
-                        <div class="provider-img">
-                            <img src="${imageUrl}" alt="${provider.name}">
-                            <span class="status available"></span>
-                        </div>
-                        <div class="provider-info">
-                            <h3>${provider.name}</h3>
-                            <p><i class="fas fa-map-marker-alt"></i> ${provider.distance} km away</p>
-                            <div class="provider-tags">
-                                <span class="tag">${dominantType || 'Various Waste'}</span>
-                                <span class="tag">${avgQuantity} kg avg/listing</span>
-                            </div>
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
-                                <span>4.5</span>
-                            </div>
-                        </div>
-                        <button class="order-btn" data-provider-id="${provider.id}">Request Waste</button>
-                    `;
-                    
-                    providerCardsContainer.appendChild(card);
-                    
-                    // Add click event to button
-                    card.querySelector('.order-btn').addEventListener('click', () => {
-                        showProviderListings(provider);
-                    });
-                });
-            } catch (error) {
-                console.error("Error loading listings:", error);
-                providerCardsContainer.innerHTML = 
-                    `<p class="error-text">Error loading providers: ${error.message}. Please try again.</p>`;
-            }
-        }
-
-        // Show modal with provider listings
-        function showProviderListings(provider) {
-            // Create modal on the fly if it doesn't exist
-            let modal = document.getElementById('listingsModal');
-            
-            if (!modal) {
-                modal = document.createElement('div');
-                modal.id = 'listingsModal';
-                modal.className = 'modal';
-                
-                modal.innerHTML = `
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3>Available Waste Listings</h3>
-                            <span class="close-modal">&times;</span>
-                        </div>
-                        <div class="modal-body">
-                            <div class="provider-details">
-                                <!-- Provider details will be populated here -->
-                            </div>
-                            <div class="provider-listings">
-                                <table class="listings-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Waste Type</th>
-                                            <th>Quantity</th>
-                                            <th>Listed Date</th>
-                                            <th>Best Before</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="listingsTableBody">
-                                        <!-- Listings will be populated here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                document.body.appendChild(modal);
-            }
-            
-            // Get modal elements
-            const providerDetails = modal.querySelector('.provider-details');
-            const listingsTableBody = modal.querySelector('#listingsTableBody');
-            
-            // Populate provider details
-            providerDetails.innerHTML = `
-                <h4>${provider.name}</h4>
-                <p><strong>Contact Person:</strong> ${provider.contactPerson}</p>
-                <p><strong>Phone:</strong> ${provider.phone}</p>
-                <p><strong>Address:</strong> ${provider.address}</p>
-                <p><strong>Distance:</strong> ${provider.distance} km away</p>
-            `;
-            
-            // Populate listings table
-            listingsTableBody.innerHTML = '';
-            provider.listings.forEach(listing => {
-                const listedDate = new Date(listing.listed_date).toLocaleDateString();
-                const bestBefore = new Date(listing.best_before).toLocaleDateString();
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${listing.foodtype}</td>
-                    <td>${listing.quantity}</td>
-                    <td>${listedDate}</td>
-                    <td>${bestBefore}</td>
-                    <td><button class="request-listing-btn" data-listing-id="${listing.listing_id}">Request</button></td>
-                `;
-                listingsTableBody.appendChild(row);
-            });
-            
-            // Add event listeners to request buttons
-            listingsTableBody.querySelectorAll('.request-listing-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const listingId = this.getAttribute('data-listing-id');
-                    requestWaste(listingId);
-                });
-            });
-            
-            // Show the modal
-            modal.style.display = 'flex';
-            
-            // Set up close functionality
-            const closeModalBtn = modal.querySelector('.close-modal');
-            closeModalBtn.onclick = function() {
-                modal.style.display = 'none';
-            };
-            
-            window.onclick = function(event) {
-                if (event.target === modal) {
-                    modal.style.display = 'none';
-                }
-            };
-        }
-        
-        
-        
-        // Function to request waste
-        function requestWaste(listingId) {
-            // Get user data
-            const user = JSON.parse(localStorage.getItem('user')) || {};
-            const companyId = user.user_id;
-            
-            if (!companyId) {
-                alert("Please log in to request waste");
-                return;
-            }
-            
-            // In a real application, you would send a request to your backend
-            
-            alert(`Request submitted for listing #${listingId}`);
-            
-            // Optional: Here you would make an actual API call
-            /*
-            fetch('http://localhost:3000/api/requestWaste', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ 
-                    listingId: listingId,
-                    companyId: companyId
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Waste request submitted successfully!');
-                } else {
-                    alert(`Error: ${data.error || 'Failed to submit request'}`);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while submitting your request.');
-            });
-            */
-            
-            // Close the modal
-            document.getElementById('listingsModal').style.display = 'none';
-        }
-        
-        // Load active listings when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            // ...existing DOMContentLoaded code...
-            
-            // Load active listings
-            loadActiveListings();
-        });
-
     </script>
-
-    <style>
-        /* Added styles to ensure listings are visible */
-        .provider-cards {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            padding: 10px 0;
-        }
-        
-        .provider-card {
-            flex: 0 0 calc(33.33% - 20px);
-            min-width: 280px;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            background-color: #fff;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            margin-bottom: 20px;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        .provider-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        
-        .loading-text, .error-text, .no-results {
-            width: 100%;
-            text-align: center;
-            padding: 30px;
-            font-size: 16px;
-            color: #666;
-        }
-        
-        .error-text {
-            color: #dc3545;
-            background-color: #fff3f3;
-            border-radius: 8px;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
 </body>
 </html>
