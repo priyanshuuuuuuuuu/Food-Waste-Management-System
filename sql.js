@@ -18,7 +18,7 @@ app.use(express.static(__dirname));
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'Priyanshu123@',
+    password: 'Tiwari@142',
     database: 'FoodLoop'
 });
 
@@ -672,23 +672,84 @@ app.get('/api/activeprovidercards', (req, res) => {
 
 // API endpoint to handle waste requests
 app.post('/api/requestWaste', (req, res) => {
-    const { companyId, listingId } = req.body;
+    console.log('Received request body:', req.body);
+    const { companyId, listingId, user_id } = req.body;
 
     if (!companyId || !listingId) {
         return res.status(400).json({ message: 'Company ID and Listing ID are required' });
     }
 
-    const query = `
-        INSERT INTO waste_request (company_id, listing_id, status)
-        VALUES (?, ?, 'requested')
+    // Step 1: Fetch listing's foodtype and provider_id
+    const listingQuery = `
+        SELECT foodtype, provider_id 
+        FROM Listing 
+        WHERE listing_id = ?
     `;
 
-    db.query(query, [companyId, listingId], (err, result) => {
-        if (err) {
-            console.error('Error inserting waste request:', err);
-            return res.status(500).json({ message: 'Failed to submit waste request' });
+    db.query(listingQuery, [listingId], (err, listingResults) => {
+        if (err || listingResults.length === 0) {
+            console.error('Error fetching listing:', err);
+            return res.status(500).json({ message: 'Failed to fetch listing details' });
         }
 
-        res.status(200).json({ message: 'Waste request submitted successfully' });
+        const { foodtype, provider_id } = listingResults[0];
+        console.log("Food Type:", foodtype);
+        console.log("Provider ID:", provider_id);
+        console.log("Company ID:", companyId);
+
+        // Step 2: Get company name
+        db.query('SELECT name FROM User WHERE user_id = ?', [user_id], (err, companyResults) => {
+            if (err || companyResults.length === 0) {
+                console.error('Error fetching company name:', err);
+                return res.status(500).json({ message: 'Failed to fetch company name' });
+            }
+
+            const companyName = companyResults[0].name;
+            console.log(companyName);
+            const message = `${companyName} is interested in your ${foodtype} listing.`;
+
+            // Step 3: Insert into Notification
+            const insertNotificationQuery = `
+                INSERT INTO Notification (message, sender_id)
+                VALUES (?, ?)
+            `;
+
+            db.query(insertNotificationQuery, [message, user_id], (err, notificationResult) => {
+                if (err) {
+                    console.error('Error inserting notification:', err);
+                    return res.status(500).json({ message: 'Failed to insert notification' });
+                }
+
+                const notificationId = notificationResult.insertId;
+
+                // Step 4: Insert into NotificationReceiver
+                const insertReceiverQuery = `
+                    INSERT INTO NotificationReceiver (notification_id, receiver_id)
+                    VALUES (?, ?)
+                `;
+
+                db.query(insertReceiverQuery, [notificationId, provider_id], (err) => {
+                    if (err) {
+                        console.error('Error inserting notification receiver:', err);
+                        return res.status(500).json({ message: 'Failed to insert notification receiver' });
+                    }
+
+                    // Step 5: Insert into waste_request
+                    const insertWasteRequest = `
+                        INSERT INTO waste_request (company_id, listing_id, status)
+                        VALUES (?, ?, 'requested')
+                    `;
+
+                    db.query(insertWasteRequest, [companyId, listingId], (err) => {
+                        if (err) {
+                            console.error('Error inserting waste request:', err);
+                            return res.status(500).json({ message: 'Failed to submit waste request' });
+                        }
+
+                        res.status(200).json({ message: 'Waste request and notification submitted successfully' });
+                    });
+                });
+            });
+        });
     });
 });
