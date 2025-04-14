@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Transporter Details | FoodLoop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/adminDashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-container">
+
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <div class="logo">FoodLoop</div>
+                <div class="admin-badge">Admin</div>
+            </div>
+            <div class="admin-info">
+                <div class="admin-img">
+                    <img src="Assets/Images/admin-profile.jpg" alt="Admin Profile">
+                </div>
+                <div class="admin-details">
+                    <h3>Admin Panel</h3>
+                    <p>System Administrator</p>
+                </div>
+            </div>
+            <nav class="admin-nav">
+                <ul>
+                    <li class="active"><a href="#dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="#users"><i class="fas fa-users"></i> User Management</a></li>
+                    <li>
+                        <a href="#transactions" class="dropdown-toggle"><i class="fas fa-exchange-alt"></i> Transactions <i class="fas fa-chevron-down"></i></a>
+                        <ul class="submenu">
+                            <li><a href="#pending">Pending</a></li>
+                            <li><a href="#completed">Completed</a></li>
+                            <li><a href="#failed">Failed</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#listings"><i class="fas fa-list"></i> Waste Listings</a></li>
+                    <li><a href="providerlist.html"><i class="fas fa-store"></i> Food Providers</a></li>
+                    <li><a href="companiesList.html"><i class="fas fa-industry"></i> Waste Processors</a></li>
+                    <li><a href="transporterelist.html"><i class="fas fa-truck"></i> Transporters</a></li>
+                    <li><a href="#reports"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                    <li><a href="#settings"><i class="fas fa-cog"></i> System Settings</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="MainPage.html" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </aside>
+
+        <main class="admin-content">
+            <header class="admin-header">
+                <div class="header-left">
+                    <a href="transporters.html" style="text-decoration: none; color: var(--primary); font-weight: bold;"></a>
+                    <h2 style="margin-left: 20px;">Transporter Details</h2>
+                </div>
+            </header>
+
+            <div class="dashboard-wrapper">
+                <!-- Transporter Info Card -->
+                <section class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon transporters">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <div class="stat-details">
+                            <p class="stat-value">QuickMove Logistics</p>
+                            <p>Contact Person: Ramesh Verma</p>
+                            <p>GST: 29ABCDE1234F2Z5</p>
+                            <p>Rating: 4.6</p>
+                            <p>Fleet Size: 6-10 vehicles</p>
+                            <p>Pending Pickups: 3</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Pickup Table -->
+                <section class="dashboard-card recent-listings">
+                    <div class="card-header">
+                        <h3><i class="fas fa-clipboard-list"></i> Recent Pickups</h3>
+                    </div>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Pickup ID</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Provider</th>
+                                    <th>Waste Type</th>
+                                    <th>Weight (kg)</th>
+                                    <th>Distance (km)</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#PKP-1012</td>
+                                    <td>2025-04-12</td>
+                                    <td>10:30 AM</td>
+                                    <td>Sunrise Cafe</td>
+                                    <td>Used Cooking Oil</td>
+                                    <td>25.5</td>
+                                    <td>12.6</td>
+                                    <td><span class="status available">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>#PKP-1013</td>
+                                    <td>2025-04-11</td>
+                                    <td>02:00 PM</td>
+                                    <td>Royal Hotel</td>
+                                    <td>Mixed Food Waste</td>
+                                    <td>40.2</td>
+                                    <td>18.4</td>
+                                    <td><span class="status processing">In Transit</span></td>
+                                </tr>
+                                <tr>
+                                    <td>#PKP-1014</td>
+                                    <td>2025-04-10</td>
+                                    <td>11:00 AM</td>
+                                    <td>Green Canteen</td>
+                                    <td>Vegetable Scraps</td>
+                                    <td>32.0</td>
+                                    <td>9.8</td>
+                                    <td><span class="status pending">Scheduled</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
