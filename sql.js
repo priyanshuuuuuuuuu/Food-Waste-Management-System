@@ -1182,3 +1182,158 @@ app.get('/api/provider-pickups', (req, res) => {
         }
     });
 });
+
+app.post('/api/start-route/:pickupId', (req, res) => {
+    const pickupId = req.params.pickupId;
+    const newStatus = req.body.newStatus;
+
+    console.log("Starting route for Pickup ID:", pickupId);
+    console.log("Updating status to:", newStatus);
+
+    const updateQuery = `
+        UPDATE Pickup
+        SET status = ?
+        WHERE pickup_id = ?
+    `;
+
+    db.query(updateQuery, [newStatus, pickupId], (err, result) => {
+        if (err) {
+            console.error('Error updating route status:', err);
+            return res.status(500).json({ error: 'Database error while updating route status' });
+        }
+
+        res.json({ message: 'Route status updated successfully!' });
+    });
+});
+
+app.get('/api/top-transporters', (req, res) => {
+    const query = `
+        SELECT 
+            t.transporter_id,
+            u.name AS transporter_name,
+            u.address,
+            t.rating,
+            COUNT(p.pickup_id) AS scheduled_pickups
+        FROM Transporter t
+        JOIN User u ON t.user_id = u.user_id
+        JOIN Pickup p ON t.transporter_id = p.transporter_id
+        WHERE p.status = 'Scheduled'
+        GROUP BY t.transporter_id
+        ORDER BY scheduled_pickups DESC
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching top transporters:', err);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+        res.json(results);
+    });
+});
+
+app.get('/api/inactive-companies', (req, res) => {
+    const query = `
+        SELECT 
+            c.company_id,
+            u.name AS company_name,
+            u.address,
+            c.industry_type,
+            c.rating,
+            COUNT(w.request_id) AS total_requests
+        FROM Company c
+        JOIN User u ON c.user_id = u.user_id
+        LEFT JOIN Waste_Request w ON c.company_id = w.company_id
+        GROUP BY c.company_id
+        ORDER BY total_requests ASC
+        LIMIT 3
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching inactive companies:', err);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+        res.json(results);
+    });
+});
+
+app.get('/api/listings', (req, res) => {
+    const sql = `
+        SELECT 
+        l.listing_id,
+        l.quantity,
+        l.foodtype,
+        DATE_FORMAT(l.listed_date, '%d-%m-%Y') AS listed_date,
+        DATE_FORMAT(l.best_before, '%d-%m-%Y') AS best_before,
+        l.num_of_interest_companies,
+        l.status,
+        u.name AS provider_name,
+        u.address AS provider_address
+        FROM Listing l
+        JOIN Provider p ON l.provider_id = p.provider_id
+        JOIN User u ON p.user_id = u.user_id
+        WHERE l.status != 'Deleted'
+        ORDER BY l.listed_date DESC
+    `;
+  
+    db.query(sql, (err, results) => {
+      if (err) {
+        console.error('Error fetching listings:', err);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+  
+      res.json(results);
+    });
+  });
+
+app.get('/api/transporters/:id', (req, res) => {
+    const transporterId = req.params.id;
+
+    const query = `
+        SELECT t.transporter_id, t.contact_person, t.gst_number, t.rating, t.fleet_size, t.pending_pickups,
+               u.name AS transporter_name
+        FROM Transporter t
+        JOIN User u ON u.user_id = t.user_id
+        WHERE t.transporter_id = ?;
+    `;
+
+    db.query(query, [transporterId], (err, results) => {
+        if (err) {
+            console.error('Error fetching transporter details:', err);
+            return res.status(500).send('Internal Server Error');
+        }
+
+        if (results.length === 0) {
+            return res.status(404).send('Transporter not found');
+        }
+
+        const transporterDetails = results[0];
+        res.json(transporterDetails);
+    });
+});
+
+// 2. API to get recent pickups for a transporter
+app.get('/api/transporters/:id/pickups', (req, res) => {
+    const transporterId = req.params.id;
+
+    const query = `
+        SELECT p.pickup_id, p.pickup_date AS date, p.pickup_time AS time, u.name AS provider,
+               l.foodtype AS waste_type, p.total_weight AS weight, p.distance, p.status
+        FROM Pickup p
+        JOIN Provider pr ON pr.provider_id = p.provider_id
+        JOIN Listing l ON l.listing_id = p.listing_id
+        JOIN User u ON u.user_id = pr.user_id
+        WHERE p.transporter_id = ?
+        ORDER BY p.pickup_date DESC
+        LIMIT 10;
+    `;
+
+    db.query(query, [transporterId], (err, results) => {
+        if (err) {
+            console.error('Error fetching recent pickups:', err);
+            return res.status(500).send('Internal Server Error');
+        }
+
+        res.json(results);
+    });
+});
