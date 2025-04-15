@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,6 +8,25 @@
     <link rel="stylesheet" href="style/adminDashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+<style>
+    #companies-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* space between cards */
+    justify-content: center; /* center align rows */
+    padding: 20px;
+}
+
+.company-card {
+    flex: 0 0 calc(33.333% - 40px); /* 3 per row with spacing */
+    box-sizing: border-box;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+</style>
 <body>
     <div class="dashboard-container">
         
@@ -21,8 +39,8 @@
             </header>
 
             <section class="companies-container">
-                <h1>Waste Processors</h1>
-                <div class="companies-list">
+                <h1>Inactive Companies</h1>
+                <div id="companies-list">
                     <div class="company-card">
                         <div class="company-img">
                             <img src="Assets/Images/company1.jpg" alt="EcoGreen Solutions">
@@ -70,79 +88,41 @@
     <footer>
         <p>&copy; 2023 FoodLoop. All rights reserved.</p>
     </footer>
-</body>
-=======
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Companies List | FoodLoop</title>
-    <link rel="stylesheet" href="style/adminportal.css">
-    <link rel="stylesheet" href="style/adminDashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <div class="dashboard-container">
-        
-        <main class="main-content">
-            <header class="page-header">
-                <div class="logo">FoodLoop</div>
-                <nav>
-                    <a href="adminDashboard.html">Back to Dashboard</a>
-                </nav>
-            </header>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch('http://localhost:3000/api/inactive-companies')
+            .then(response => response.json())
+            .then(companies => {
+                const container = document.getElementById('companies-list');
+                container.innerHTML = ''; // Clear existing
 
-            <section class="companies-container">
-                <h1>Waste Processors</h1>
-                <div class="companies-list">
-                    <div class="company-card">
-                        <div class="company-img">
-                            <img src="Assets/Images/company1.jpg" alt="EcoGreen Solutions">
-                        </div>
-                        <div class="company-info">
-                            <h3>EcoGreen Solutions</h3>
-                            <p><i class="fas fa-map-marker-alt"></i> Mumbai, Maharashtra</p>
-                            <div class="company-tags">
-                                <span class="tag">Biogas Production</span>
-                                <span class="tag">Rating: 4.5</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="company-card">
-                        <div class="company-img">
-                            <img src="Assets/Images/company2.jpg" alt="GreenCompost Ltd">
-                        </div>
-                        <div class="company-info">
-                            <h3>GreenCompost Ltd</h3>
-                            <p><i class="fas fa-map-marker-alt"></i> Pune, Maharashtra</p>
-                            <div class="company-tags">
-                                <span class="tag">Composting</span>
-                                <span class="tag">Rating: 4.2</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="company-card">
-                        <div class="company-img">
-                            <img src="Assets/Images/company3.jpg" alt="BioFuel Corp">
-                        </div>
-                        <div class="company-info">
-                            <h3>BioFuel Corp</h3>
-                            <p><i class="fas fa-map-marker-alt"></i> Bengaluru, Karnataka</p>
-                            <div class="company-tags">
-                                <span class="tag">Biofuel Production</span>
-                                <span class="tag">Rating: 4.8</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
+                companies.forEach((company, index) => {
+                    console.log("Company: " + index); // Debugging line
+                    // Fallback to default image if needed
+                    const imageSrc = `Assets/Images/company${index + 1}.jpg`; 
 
-    <footer>
-        <p>&copy; 2023 FoodLoop. All rights reserved.</p>
-    </footer>
+                    const card = document.createElement('div');
+                    card.className = 'company-card';
+                    card.innerHTML = `
+                        <div class="company-img">
+                            <img src="${imageSrc}" alt="${company.company_name}">
+                        </div>
+                        <div class="company-info">
+                            <h3>${company.company_name}</h3>
+                            <p><i class="fas fa-map-marker-alt"></i> ${company.address}</p>
+                            <div class="company-tags">
+                                <span class="tag">${company.industry_type}</span>
+                                <span class="tag">Rating: ${company.rating}</span>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            })
+            .catch(error => {
+                console.error('Failed to fetch companies:', error);
+            });
+    });
+    </script>
 </body>
->>>>>>> ace2edee0b7d120cc5747ec912dc7311d326eb1d
 </html>
