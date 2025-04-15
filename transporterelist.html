@@ -86,7 +86,7 @@
 
             data.forEach((transporter, index) => {
                 const card = document.createElement('a');
-                card.href = "transporterDetails.html";
+                card.href = `transporterDetails.html?id=${transporter.transporter_id}`;
                 card.style.textDecoration = "none";
                 card.style.color = "inherit";
                 card.innerHTML = `
