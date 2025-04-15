@@ -39,9 +39,9 @@
                         </ul>
                     </li>
                     <li><a href="#listings"><i class="fas fa-list"></i> Waste Listings</a></li>
-                    <li><a href="providerlist.html"><i class="fas fa-store"></i> Food Providers</a></li>
+                    <li><a href="#providers"><i class="fas fa-store"></i> Food Providers</a></li>
                     <li><a href="companiesList.html"><i class="fas fa-industry"></i> Waste Processors</a></li>
-                    <li><a href="transporterelist.html"><i class="fas fa-truck"></i> Transporters</a></li>
+                    <li><a href="#transporters"><i class="fas fa-truck"></i> Transporters</a></li>
                     <li><a href="#reports"><i class="fas fa-chart-bar"></i> Reports</a></li>
                     <li><a href="#settings"><i class="fas fa-cog"></i> System Settings</a></li>
                 </ul>
@@ -138,8 +138,8 @@
                         </div>
                         <div class="stat-details">
                             <h3>Total Users</h3>
-                            <p class="stat-value">1,245</p>
-                            <p class="stat-change positive"><i class="fas fa-arrow-up"></i> 12% this month</p>
+                            <p class="stat-value" id="totalUsersCount">0</p>
+                            <p class="stat-change positive"><i class="fas fa-arrow-up"></i> 0% this month</p>
                         </div>
                     </div>
                     
@@ -149,8 +149,8 @@
                         </div>
                         <div class="stat-details">
                             <h3>Food Providers</h3>
-                            <p class="stat-value">865</p>
-                            <p class="stat-change positive"><i class="fas fa-arrow-up"></i> 8% this month</p>
+                            <p class="stat-value" id="providersCount">0</p>
+                            <p class="stat-change positive"><i class="fas fa-arrow-up"></i> 0% this month</p>
                         </div>
                     </div>
                     
@@ -160,8 +160,8 @@
                         </div>
                         <div class="stat-details">
                             <h3>Waste Processors</h3>
-                            <p class="stat-value">204</p>
-                            <p class="stat-change positive"><i class="fas fa-arrow-up"></i> 5% this month</p>
+                            <p class="stat-value" id="companiesCount">0</p>
+                            <p class="stat-change positive"><i class="fas fa-arrow-up"></i> 0% this month</p>
                         </div>
                     </div>
                     
@@ -171,8 +171,8 @@
                         </div>
                         <div class="stat-details">
                             <h3>Transporters</h3>
-                            <p class="stat-value">176</p>
-                            <p class="stat-change positive"><i class="fas fa-arrow-up"></i> 3% this month</p>
+                            <p class="stat-value" id="transportersCount">0</p>
+                            <p class="stat-change positive"><i class="fas fa-arrow-up"></i> 0% this month</p>
                         </div>
                     </div>
                 </section>
@@ -198,7 +198,18 @@
                             </div>
                         </div>
                     </div>
-
+                    
+                    
+                    <div class="dashboard-card assign-transporters">
+                        <div class="card-header">
+                            <h3><i class="fas fa-truck"></i> Assign Transporters</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="assign-transporters-grid" id="assignTransportersGrid">
+                                <!-- Cards will be dynamically populated -->
+                            </div>
+                        </div>
+                    </div>
                     <!-- System Performance -->
                     <div class="dashboard-card system-performance">
                         <div class="card-header">
@@ -387,6 +398,8 @@
                         </div>
                     </div>
 
+                    
+
                     <!-- Pending Approvals -->
                     <div class="dashboard-card pending-approvals">
                         <div class="card-header">
@@ -473,7 +486,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-    <script src="script.js"></script>
+    <script src="js/script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Toggle sidebar
@@ -604,6 +617,113 @@
                     window.location.href = 'MainPage.html';
                 });
             });
+
+            const assignTransportersGrid = document.getElementById('assignTransportersGrid');
+
+            // Fetch and populate the Assign Transporters section
+            async function loadAssignTransporters() {
+                try {
+                    const response = await fetch('http://localhost:3000/api/waste-requests');
+                    const data = await response.json();
+
+                    assignTransportersGrid.innerHTML = ''; // Clear existing cards
+
+                    data.forEach(request => {
+                        const card = document.createElement('div');
+                        card.classList.add('assign-card');
+                        card.innerHTML = `
+                            <div class="assign-card-header">
+                                <h4>Request ID: ${request.request_id}</h4>
+                            </div>
+                            <div class="assign-card-body">
+                                <p><strong>Company:</strong> ${request.contact_person_name}</p>
+                                <p><strong>Provider:</strong> ${request.name}</p>
+                                <p><strong>Waste Type:</strong> ${request.WasteType}</p>
+                                <p><strong>Quantity:</strong> ${request.quantity} kg</p>
+                                <div class="assign-action">
+                                    <select class="transporter-select" data-request-id="${request.request_id}">
+                                        <option value="" disabled selected>Select Transporter</option>
+                                        <!-- Transporter options will be dynamically populated -->
+                                    </select>
+                                    <button class="assign-btn" data-request-id="${request.request_id}">Assign</button>
+                                </div>
+                            </div>
+                        `;
+                        assignTransportersGrid.appendChild(card);
+                    });
+
+                    // Populate transporter options
+                    const transporterResponse = await fetch('http://localhost:3000/api/transporters');
+                    const transporters = await transporterResponse.json();
+
+                    document.querySelectorAll('.transporter-select').forEach(select => {
+                        transporters.forEach(transporter => {
+                            const option = document.createElement('option');
+                            option.value = transporter.transporter_id;
+                            option.textContent = transporter.name;
+                            select.appendChild(option);
+                        });
+                    });
+
+                    // Add event listeners to "Assign" buttons
+                    document.querySelectorAll('.assign-btn').forEach(button => {
+                        button.addEventListener('click', function () {
+                            const requestId = this.getAttribute('data-request-id');
+                            const transporterId = this.previousElementSibling.value;
+
+                            if (!transporterId) {
+                                alert('Please select a transporter.');
+                                return;
+                            }
+
+                            assignTransporter(requestId, transporterId);
+                        });
+                    });
+                } catch (error) {
+                    console.error('Error loading assign transporters:', error);
+                }
+            }
+
+            // Assign a transporter to a waste request
+            async function assignTransporter(requestId, transporterId) {
+                try {
+                    const response = await fetch('http://localhost:3000/api/assign-transporter', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ requestId, transporterId }),
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        alert('Transporter assigned successfully!');
+                        loadAssignTransporters(); // Refresh the section
+                    } else {
+                        alert(`Failed to assign transporter: ${result.message}`);
+                    }
+                } catch (error) {
+                    console.error('Error assigning transporter:', error);
+                    alert('An error occurred while assigning the transporter.');
+                }
+            }
+
+            loadAssignTransporters();
+        });
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            try {
+                const response = await fetch('http://localhost:3000/api/dashboard-stats');
+                const stats = await response.json();
+
+                document.getElementById('totalUsersCount').textContent = stats.totalUsers || 0;
+                document.getElementById('providersCount').textContent = stats.providers || 0;
+                document.getElementById('companiesCount').textContent = stats.companies || 0;
+                document.getElementById('transportersCount').textContent = stats.transporters || 0;
+            } catch (error) {
+                console.error('Error fetching dashboard stats:', error);
+            }
         });
     </script>
 </body>

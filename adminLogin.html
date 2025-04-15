@@ -18,7 +18,7 @@
                 <h1>Admin Login</h1>
                 <p class="login-description">Please enter your credentials to access the admin dashboard</p>
                 
-                <form id="adminLoginForm" action="AdminsDashboard.html" method="POST">
+                <form id="adminLoginForm" method="POST">
                     <div class="input-group">
                         <label for="adminUsername">Username</label>
                         <div class="input-with-icon">
@@ -56,6 +56,24 @@
             </div>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script>
+
+            document.getElementById("adminLoginForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById("adminUsername").value;
+            const password = document.getElementById("adminPassword").value;
+
+            const validUsername = "admin@foodloop.com";
+            const validPassword = "admin123";
+
+            if (username === validUsername && password === validPassword) {
+                window.location.href = "AdminsDashboard.html";
+            } else {
+                alert("Invalid username or password. Please try again.");
+            }
+        });
+
+    </script>
 </body>
 </html>

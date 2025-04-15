@@ -209,54 +209,9 @@
                     <div class="section-header">
                         <h2>Upcoming Pickups</h2>
                     </div>
-                    <div class="pickups-container">
-                        <div class="pickup-card">
-                            <div class="pickup-date">
-                                <span class="day">12</span>
-                                <span class="month">OCT</span>
-                            </div>
-                            <div class="pickup-details">
-                                <h3>BioFuel Inc.</h3>
-                                <p><i class="fas fa-truck"></i> Pickup Window: 1:00 PM - 3:00 PM</p>
-                                <p><i class="fas fa-recycle"></i> Used Cooking Oil - 10kg</p>
-                            </div>
-                            <div class="pickup-actions">
-                                <button class="reschedule-btn">Reschedule</button>
-                                <button class="details-btn">Details</button>
-                            </div>
-                        </div>
-                        
-                        <div class="pickup-card">
-                            <div class="pickup-date">
-                                <span class="day">15</span>
-                                <span class="month">OCT</span>
-                            </div>
-                            <div class="pickup-details">
-                                <h3>Green Composting Co.</h3>
-                                <p><i class="fas fa-truck"></i> Pickup Window: 9:00 AM - 11:00 AM</p>
-                                <p><i class="fas fa-recycle"></i> Vegetable Scraps - 15kg</p>
-                            </div>
-                            <div class="pickup-actions">
-                                <button class="reschedule-btn">Reschedule</button>
-                                <button class="details-btn">Details</button>
-                            </div>
-                        </div>
-                        
-                        <div class="pickup-card">
-                            <div class="pickup-date">
-                                <span class="day">18</span>
-                                <span class="month">OCT</span>
-                            </div>
-                            <div class="pickup-details">
-                                <h3>EcoProcess Ltd.</h3>
-                                <p><i class="fas fa-truck"></i> Pickup Window: 2:00 PM - 4:00 PM</p>
-                                <p><i class="fas fa-recycle"></i> Mixed Food Waste - 25kg</p>
-                            </div>
-                            <div class="pickup-actions">
-                                <button class="reschedule-btn">Reschedule</button>
-                                <button class="details-btn">Details</button>
-                            </div>
-                        </div>
+                    <div class="pickups-container" id="pickupsContainer">
+                        <!-- Pickups will be dynamically loaded here -->
+                        <p>Loading pickups...</p>
                     </div>
                 </div>
                 
@@ -644,6 +599,80 @@
 
             // Fetch notifications on page load
             fetchNotifications();
+        });
+
+        // Load upcoming pickups for the provider
+        async function loadUpcomingPickups() {
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (!user || !user.provider_id) {
+                    console.error('Provider ID not found');
+                    document.getElementById('pickupsContainer').innerHTML = '<p>Error: Provider ID not found. Please log in again.</p>';
+                    return;
+                }
+                
+                console.log('Fetching pickups for provider ID:', user.provider_id);
+                
+                const response = await fetch(`http://localhost:3000/api/provider-pickups?provider_id=${user.provider_id}`);
+                
+                // Check if response is OK before trying to parse JSON
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('API error:', response.status, errorText);
+                    document.getElementById('pickupsContainer').innerHTML = `<p>Error loading pickups. Server returned: ${response.status}</p>`;
+                    return;
+                }
+                
+                const pickups = await response.json();
+                console.log('Received pickups data:', pickups);
+                
+                const pickupsContainer = document.getElementById('pickupsContainer');
+                pickupsContainer.innerHTML = '';
+                
+                if (!pickups || pickups.length === 0) {
+                    pickupsContainer.innerHTML = '<p>No upcoming pickups scheduled.</p>';
+                    return;
+                }
+                
+                pickups.forEach(pickup => {
+                    const date = new Date(pickup.pickup_date);
+                    const day = date.getDate();
+                    const month = date.toLocaleString('default', { month: 'short' }).toUpperCase();
+                    
+                    const card = document.createElement('div');
+                    card.className = 'pickup-card';
+                    card.innerHTML = `
+                        <div class="pickup-date">
+                            <span class="day">${day}</span>
+                            <span class="month">${month}</span>
+                        </div>
+                        <div class="pickup-details">
+                            <h3>${pickup.waste_type || 'Food Waste'}</h3>
+                            <p><i class="fas fa-building"></i> Company: <span class="company-name">${pickup.company_name || 'Assigned Company'}</span></p>
+                            <p><i class="fas fa-truck"></i> Transporter: <span class="transporter-name">${pickup.transporter_name || 'Assigned Transporter'}</span></p>
+                            <p><i class="fas fa-clock"></i> Pickup Time: ${pickup.pickup_time || 'To be determined'}</p>
+                            <p><i class="fas fa-recycle"></i> Quantity: ${pickup.quantity || 'Not specified'} kg</p>
+                        </div>
+                        <div class="pickup-actions">
+                            <button class="reschedule-btn">Reschedule</button>
+                        </div>
+                    `;
+                    
+                    pickupsContainer.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error loading upcoming pickups:', error);
+                document.getElementById('pickupsContainer').innerHTML = `<p>Error loading pickup information: ${error.message}</p>`;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // ...existing code...
+            
+            // Load upcoming pickups
+            loadUpcomingPickups();
+            
+            // ...existing code...
         });
     </script>
 </body>

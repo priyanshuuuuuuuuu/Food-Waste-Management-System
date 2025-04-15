@@ -995,3 +995,189 @@ app.post('/api/mark-notifications-read', (req, res) => {
         res.json({ message: 'Notifications marked as read' });
     });
 });
+
+// Fetch waste requests
+app.get('/api/waste-requests', (req, res) => {
+    const query = `
+        SELECT request_id , contact_person_name,name, foodtype as WasteType,  quantity 
+            from waste_request
+            join company on company.company_id = waste_request.company_id
+            join Listing on Listing.listing_id = waste_request.listing_id join User on User.user_id = waste_request.listing_id
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching waste requests:', err);
+            return res.status(500).json({ message: 'Failed to fetch waste requests' });
+        }
+
+        res.json(results);
+    });
+});
+
+// Assign transporter to a waste request
+app.post('/api/assign-transporter', (req, res) => {
+    const { requestId, transporterId } = req.body;
+
+    if (!requestId || !transporterId) {
+        return res.status(400).json({ message: 'Request ID and Transporter ID are required' });
+    }
+
+    const query = `
+        INSERT INTO Pickup (provider_id, company_id, transporter_id, listing_id, request_id, status)
+        SELECT 
+            pr.provider_id,
+            wr.company_id,
+            ? AS transporter_id,
+            wr.listing_id,
+            wr.request_id,
+            'Scheduled' AS status
+        FROM waste_request wr
+        JOIN Listing l ON wr.listing_id = l.listing_id
+        JOIN Provider pr ON l.provider_id = pr.provider_id
+        WHERE wr.request_id = ?
+    `;
+
+    db.query(query, [transporterId, requestId], (err, result) => {
+        if (err) {
+            console.error('Error assigning transporter:', err);
+            return res.status(500).json({ message: 'Failed to assign transporter' });
+        }
+
+        res.json({ message: 'Transporter assigned successfully!' });
+    });
+});
+
+// Fetch transporters
+app.get('/api/transporters', (req, res) => {
+    const query = `
+        SELECT transporter_id, contact_person AS name
+        FROM Transporter
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching transporters:', err);
+            return res.status(500).json({ message: 'Failed to fetch transporters' });
+        }
+
+        res.json(results);
+    });
+});
+
+// API endpoint to fetch dashboard stats
+app.get('/api/dashboard-stats', (req, res) => {
+    const queries = {
+        totalUsers: 'SELECT COUNT(*) AS count FROM User',
+        providers: 'SELECT COUNT(*) AS count FROM Provider',
+        companies: 'SELECT COUNT(*) AS count FROM company',
+        transporters: 'SELECT COUNT(*) AS count FROM Transporter'
+    };
+
+    const stats = {};
+
+    db.query(queries.totalUsers, (err, results) => {
+        if (err) {
+            console.error('Error fetching total users:', err);
+            return res.status(500).json({ message: 'Failed to fetch total users' });
+        }
+        stats.totalUsers = results[0].count;
+
+        db.query(queries.providers, (err, results) => {
+            if (err) {
+                console.error('Error fetching providers:', err);
+                return res.status(500).json({ message: 'Failed to fetch providers' });
+            }
+            stats.providers = results[0].count;
+
+            db.query(queries.companies, (err, results) => {
+                if (err) {
+                    console.error('Error fetching companies:', err);
+                    return res.status(500).json({ message: 'Failed to fetch companies' });
+                }
+                stats.companies = results[0].count;
+
+                db.query(queries.transporters, (err, results) => {
+                    if (err) {
+                        console.error('Error fetching transporters:', err);
+                        return res.status(500).json({ message: 'Failed to fetch transporters' });
+                    }
+                    stats.transporters = results[0].count;
+
+                    res.json(stats);
+                });
+            });
+        });
+    });
+});
+
+// API endpoint to get upcoming pickups for a provider
+app.get('/api/provider-pickups', (req, res) => {
+    const providerId = req.query.provider_id;
+    
+    if (!providerId) {
+        return res.status(400).json({ message: 'Provider ID is required' });
+    }
+    
+    console.log(`Fetching pickups for provider ID: ${providerId}`);
+    
+    // Use a simpler query that doesn't rely on complex joins
+    const query = `
+        SELECT p.pickup_id, p.pickup_date,CURDATE() + 10 AS pickup_time,l.foodtype AS waste_type,l.quantity,c_user.name AS company_name,
+        t_user.name AS transporter_name
+        FROM Pickup p
+        JOIN Listing l ON p.listing_id = l.listing_id
+        JOIN company c ON p.company_id = c.company_id
+        JOIN User c_user ON c.user_id = c_user.user_id
+        JOIN Transporter t ON p.transporter_id = t.transporter_id
+        JOIN User t_user ON t.user_id = t_user.user_id
+        WHERE p.provider_id = ? AND p.status IN ('Scheduled', 'In Progress')
+        ORDER BY p.pickup_date ASC, p.pickup_time ASC
+    `;
+    
+    db.query(query, [providerId], (err, pickupResults) => {
+        if (err) {
+            console.error('Error fetching provider pickups:', err);
+            return res.status(500).json({ 
+                message: 'Failed to fetch pickup information',
+                error: err.message 
+            });
+        }
+        
+        // If there are no pickups, return an empty array
+        if (pickupResults.length === 0) {
+            return res.json([]);
+        }
+        
+        // For each pickup, fetch the company and transporter information separately
+        const enhancedResults = [];
+        let processed = 0;
+        
+        pickupResults.forEach(pickup => {
+            const basicPickup = {
+                pickup_id: pickup.pickup_id,
+                pickup_date: pickup.pickup_date,
+                pickup_time: pickup.pickup_time ? pickup.pickup_time.toString() : null,
+                waste_type: pickup.waste_type,
+                quantity: pickup.quantity,
+                status: pickup.status,
+                company_name: pickup.company_name ||"Unknown Company", // Default values
+                transporter_name: pickup.transporter_name
+            };
+            
+            enhancedResults.push(basicPickup);
+            processed++;
+            
+            // When all pickups have been processed, return the results
+            if (processed === pickupResults.length) {
+                console.log(`Returning ${enhancedResults.length} pickups for provider ${providerId}`);
+                res.json(enhancedResults);
+            }
+        });
+        
+        // Handle empty results case
+        if (pickupResults.length === 0) {
+            res.json([]);
+        }
+    });
+});
