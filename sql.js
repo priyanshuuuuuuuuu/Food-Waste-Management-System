@@ -670,6 +670,7 @@ app.get('/api/activeprovidercards', (req, res) => {
             p.rating,
             p.provider_id,
             p.owner_name,
+            u.user_id,
             u.name AS provider_name,
             u.address,
             u.phone_number

@@ -58,13 +58,13 @@
                         <div class="form-row">
                             <div class="profile-upload">
                                 <div class="profile-preview">
-                                    <img src="Assets/Images/company-profile.jpg" alt="Profile Preview">
+                                    <img src="Assets/Images/company-profile.jpg" alt="Profile Preview" id="profilePreview">
                                 </div>
                                 <div class="upload-actions">
-                                    <button type="button" class="upload-btn"><i class="fas fa-upload"></i> Upload New
-                                        Image</button>
-                                    <button type="button" class="remove-btn"><i class="fas fa-trash"></i>
-                                        Remove</button>
+                                    <button type="button" class="upload-btn" id="uploadTrigger"><i class="fas fa-upload"></i> Upload New Image</button>
+                                    <button type="button" class="remove-btn" id="removeProfileImage"><i class="fas fa-trash"></i> Remove</button>
+                                    <!-- Add hidden file input for image upload -->
+                                    <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
                                 </div>
                             </div>
                         </div>
@@ -324,6 +324,92 @@
     </footer>
 
     <script>
+        // Profile image upload functionality
+        function setupProfileImageUpload() {
+            const uploadTrigger = document.getElementById('uploadTrigger');
+            const profileImageInput = document.getElementById('profileImageInput');
+            const profilePreview = document.getElementById('profilePreview');
+            const removeProfileImage = document.getElementById('removeProfileImage');
+            
+            if (!uploadTrigger || !profileImageInput || !profilePreview || !removeProfileImage) {
+                return; // Elements not found
+            }
+            
+            // Trigger file input when upload button is clicked
+            uploadTrigger.addEventListener('click', function() {
+                profileImageInput.click();
+            });
+            
+            // Handle file selection
+            profileImageInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (!file) return;
+                
+                // Get current user
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (!user || !user.user_id) {
+                    alert('User information not found. Please log in again.');
+                    return;
+                }
+                
+                // Validate file type
+                const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                if (!validImageTypes.includes(file.type)) {
+                    alert('Please select a valid image file (JPEG, PNG, GIF, WebP)');
+                    return;
+                }
+                
+                // Validate file size (max 2MB)
+                const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+                if (file.size > maxSize) {
+                    alert('Image size should be less than 2MB');
+                    return;
+                }
+                
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Store photo with user ID for cross-page access
+                    localStorage.setItem(`profilePhoto_${user.user_id}`, e.target.result);
+                    
+                    // Update preview
+                    profilePreview.src = e.target.result;
+                    
+                    // Update all profile images on the page
+                    document.querySelectorAll('#profileImage').forEach(img => {
+                        img.src = e.target.result;
+                    });
+                };
+                reader.readAsDataURL(file);
+            });
+            
+            // Handle remove button click
+            removeProfileImage.addEventListener('click', function() {
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (!user || !user.user_id) return;
+                
+                // Remove stored photo
+                localStorage.removeItem(`profilePhoto_${user.user_id}`);
+                
+                // Reset to default image
+                let defaultImage = 'Assets/Images/provider-profile.jpg';
+                if (user.role === 'Company') {
+                    defaultImage = 'Assets/Images/company-profile.jpg';
+                } else if (user.role === 'Transporter') {
+                    defaultImage = 'Assets/Images/transport-profile.jpg';
+                }
+                
+                // Update preview and other profile images
+                profilePreview.src = defaultImage;
+                document.querySelectorAll('#profileImage').forEach(img => {
+                    img.src = defaultImage;
+                });
+                
+                // Clear file input
+                profileImageInput.value = '';
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             // Tab switching functionality
             const tabItems = document.querySelectorAll('.settings-menu li');
@@ -552,6 +638,104 @@
                     confirmDeleteBtn.textContent = 'Delete Account';
                 }
             });
+
+            // Profile image upload functionality
+            const uploadTrigger = document.getElementById('uploadTrigger');
+            const profileImageInput = document.getElementById('profileImageInput');
+            const profilePreview = document.getElementById('profilePreview');
+            const removeProfileImage = document.getElementById('removeProfileImage');
+            
+            // Trigger file input when upload button is clicked
+            uploadTrigger.addEventListener('click', function() {
+                profileImageInput.click();
+            });
+            
+            // Handle file selection
+            profileImageInput.addEventListener('change', function() {
+                const file = this.files[0];
+                const user = JSON.parse(localStorage.getItem('user'));
+                
+                if (file && user) {
+                    // Validate file type
+                    const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                    if (!validImageTypes.includes(file.type)) {
+                        alert('Please select a valid image file (JPEG, PNG, GIF, WebP)');
+                        return;
+                    }
+                    
+                    // Validate file size (max 5MB)
+                    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+                    if (file.size > maxSize) {
+                        alert('Image size should be less than 5MB');
+                        return;
+                    }
+                    
+                    // Create a preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        profilePreview.src = e.target.result;
+                        
+                        // Store the image data with a user-specific key
+                        localStorage.setItem('profileImage', e.target.result); // Legacy storage
+                        localStorage.setItem(`profileImage_${user.user_id}`, e.target.result); // User-specific storage
+                        
+                        // Update all profile images on the page
+                        document.querySelectorAll('#profileImage').forEach(img => {
+                            img.src = e.target.result;
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Handle remove button click
+            removeProfileImage.addEventListener('click', function() {
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (!user) return;
+                
+                // Reset preview to default
+                const defaultImage = getUserRoleImage();
+                profilePreview.src = defaultImage;
+                
+                // Clear stored images
+                localStorage.removeItem('profileImage');
+                localStorage.removeItem(`profileImage_${user.user_id}`);
+                
+                // Reset file input
+                profileImageInput.value = '';
+                
+                // Update all profile images on the page
+                document.querySelectorAll('#profileImage').forEach(img => {
+                    img.src = defaultImage;
+                });
+            });
+            
+            // Function to get default image based on user role
+            function getUserRoleImage() {
+                const user = JSON.parse(localStorage.getItem('user'));
+                if (user) {
+                    if (user.role === 'Transporter') {
+                        return 'Assets/Images/transport-profile.jpg';
+                    } else if (user.role === 'Company') {
+                        return 'Assets/Images/company-profile.jpg';
+                    } else {
+                        return 'Assets/Images/provider-profile.jpg';
+                    }
+                }
+                return 'Assets/Images/company-profile.jpg'; // Default fallback
+            }
+            
+            // Check if there's a stored profile image
+            const storedImage = localStorage.getItem('profileImage');
+            if (storedImage) {
+                profilePreview.src = storedImage;
+                document.querySelectorAll('#profileImage').forEach(img => {
+                    img.src = storedImage;
+                });
+            }
+
+            // Add profile image upload setup
+            setupProfileImageUpload();
         });
     </script>
 
