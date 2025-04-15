@@ -750,6 +750,7 @@ app.post('/api/requestWaste', (req, res) => {
                 });
             });
         });
+<<<<<<< HEAD
     });
 });
 
@@ -924,5 +925,7 @@ app.post('/api/start-route/:pickupId', (req, res) => {
         }
 
         res.json({ message: 'Route status updated successfully!' });
+=======
+>>>>>>> ace2edee0b7d120cc5747ec912dc7311d326eb1d
     });
 });
