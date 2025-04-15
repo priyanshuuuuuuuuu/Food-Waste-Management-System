@@ -995,3 +995,84 @@ app.post('/api/mark-notifications-read', (req, res) => {
         res.json({ message: 'Notifications marked as read' });
     });
 });
+
+app.get('/api/top-transporters', (req, res) => {
+    const query = `
+        SELECT 
+            t.transporter_id,
+            u.name AS transporter_name,
+            u.address,
+            t.rating,
+            COUNT(p.pickup_id) AS scheduled_pickups
+        FROM Transporter t
+        JOIN User u ON t.user_id = u.user_id
+        JOIN Pickup p ON t.transporter_id = p.transporter_id
+        WHERE p.status = 'Scheduled'
+        GROUP BY t.transporter_id
+        ORDER BY scheduled_pickups DESC
+        LIMIT 3
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching top transporters:', err);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+        res.json(results);
+    });
+});
+
+app.get('/api/inactive-companies', (req, res) => {
+    const query = `
+        SELECT 
+            c.company_id,
+            u.name AS company_name,
+            u.address,
+            c.industry_type,
+            c.rating,
+            COUNT(w.request_id) AS total_requests
+        FROM Company c
+        JOIN User u ON c.user_id = u.user_id
+        LEFT JOIN Waste_Request w ON c.company_id = w.company_id
+        GROUP BY c.company_id
+        ORDER BY total_requests ASC
+        LIMIT 3
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching inactive companies:', err);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+        res.json(results);
+    });
+});
+
+app.get('/api/listings', (req, res) => {
+    const sql = `
+        SELECT 
+        l.listing_id,
+        l.quantity,
+        l.foodtype,
+        DATE_FORMAT(l.listed_date, '%d-%m-%Y') AS listed_date,
+        DATE_FORMAT(l.best_before, '%d-%m-%Y') AS best_before,
+        l.num_of_interest_companies,
+        l.status,
+        u.name AS provider_name,
+        u.address AS provider_address
+        FROM Listing l
+        JOIN Provider p ON l.provider_id = p.provider_id
+        JOIN User u ON p.user_id = u.user_id
+        WHERE l.status != 'Deleted'
+        ORDER BY l.listed_date DESC
+    `;
+  
+    db.query(sql, (err, results) => {
+      if (err) {
+        console.error('Error fetching listings:', err);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+  
+      res.json(results);
+    });
+  });
