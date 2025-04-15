@@ -510,20 +510,27 @@
                     return;
                 }
 
-                const companyId = user.company_id; // Ensure company_id is stored in localStorage
+                const companyId = user.company_id;
+                const userId = user.user_id; // Get the user_id
 
                 if (!companyId) {
                     alert('Company ID not found. Please log in again.');
                     return;
                 }
 
+                console.log('Sending waste request with user_id:', userId);
+                
                 // Send the request to the backend
                 const response = await fetch('http://localhost:3000/api/requestWaste', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ companyId, listingId }),
+                    body: JSON.stringify({ 
+                        companyId, 
+                        listingId, 
+                        user_id: userId  // Include the user_id in the request
+                    }),
                 });
 
                 const result = await response.json();
