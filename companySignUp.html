@@ -22,7 +22,7 @@
             </div>
             <div class="login-form">
                 <h2>Register as Company</h2>
-                <form action="http://localhost:3000/api/registerCompany" method="POST">
+                <form id="companySignupForm">
                     <div class="input-box">
                         <label for="CompanyName">Company Name</label>
                         <input type="text" name="CompanyName" required>
@@ -75,21 +75,70 @@
                             <input type="password" name="ConfirmPassword" required>
                         </div>
                     </div>
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="terms" required>
+                        <label for="terms">I agree to the <a href="legal.html?tab=terms">Terms of Service</a> and <a href="legal.html?tab=privacy">Privacy Policy</a></label>
+                    </div>
                     <div class="continue-button">
                         <input type="submit" value="Create Company Account">
                     </div>
-            </form>
-                <div class="terms-checkbox">
-                    <input type="checkbox" id="terms" required>
-                    <label for="terms">I agree to the <a href="legal.html?tab=terms">Terms of Service</a> and <a href="legal.html?tab=privacy">Privacy Policy</a></label>
-                </div>
+                </form>
+
                 <div class="google-signin">
                     <div class="g_id_signin" data-type="standard"></div>
                 </div>
-
             </div>
         </div>
     </div>
-    <script src="js/script.js"></script>
+
+    <!-- Script to handle form submission -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById("companySignupForm");
+
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+
+                const formData = new FormData(form);
+                const data = {};
+                formData.forEach((value, key) => {
+                    data[key] = value;
+                });
+
+                const termsCheckbox = document.getElementById("terms");
+                if (!termsCheckbox.checked) {
+                    alert("You must agree to the Terms and Privacy Policy.");
+                    return;
+                }
+
+                const submitBtn = form.querySelector("input[type='submit']");
+                submitBtn.disabled = true;
+
+                try {
+                    const response = await fetch("http://localhost:3000/api/registerCompany", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        alert(result.message);
+                        window.location.href = result.redirectUrl;
+                    } else {
+                        alert(result.error || "Registration failed");
+                        submitBtn.disabled = false;
+                    }
+                } catch (error) {
+                    console.error("Error during registration:", error);
+                    alert("An error occurred. Please try again.");
+                    submitBtn.disabled = false;
+                }
+            });
+        });
+    </script>
 </body>
 </html>

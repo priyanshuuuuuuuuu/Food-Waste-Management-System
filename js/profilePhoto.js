@@ -1,14 +1,14 @@
 /**
- * Utility functions for handling user profile photos across the application
- */
-
-/**
- * Get the profile photo URL for a user based on user ID and role
- * @param {string|number} userId - The user ID
- * @param {string} role - The user role (FoodProvider, Company, Transporter)
- * @returns {string} - URL to the profile image
- */
-function getUserProfilePhoto(userId, role) {
+  * Utility functions for handling user profile photos across the application
+  */
+ 
+ /**
+  * Get the profile photo URL for a user based on user ID and role
+  * @param {string|number} userId - The user ID
+  * @param {string} role - The user role (FoodProvider, Company, Transporter)
+  * @returns {string} - URL to the profile image
+  */
+ function getUserProfilePhoto(userId, role) {
     // Try to get profile photo from localStorage with user-specific key
     if (userId) {
         const userPhoto = localStorage.getItem(`profilePhoto_${userId}`);

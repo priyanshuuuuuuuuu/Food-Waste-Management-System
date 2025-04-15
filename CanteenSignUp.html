@@ -27,7 +27,7 @@
             <div class="login-form">
                 <h2>Create a Food Provider Account</h2>
                 <p class="role-desc">For restaurants, canteens, hotels, and food vendors</p>
-                <form action="http://localhost:3000/api/registerProvider" method="POST">
+                <form id="providerForm">
                     <div class="input-box">
                         <label for="BusinessName">Business Name</label>
                         <input type="text" id="BusinessName" name="BusinessName" placeholder="Your restaurant or canteen name" required>
@@ -86,5 +86,39 @@
         </div>
     </div>
     <script src="js/script.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("providerForm");
+
+        form.addEventListener("submit", async function (event) {
+            event.preventDefault(); // prevent default HTML form submission
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch("http://localhost:3000/api/registerProvider", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    alert(result.message); // optional message
+                    window.location.href = result.redirectUrl; // go to loginPage.html
+                } else {
+                    alert(result.error || "Registration failed.");
+                }
+            } catch (error) {
+                console.error("Error during fetch:", error);
+                alert("An error occurred while registering. Please try again later.");
+            }
+        });
+    });
+    </script>
 </body>
 </html>
