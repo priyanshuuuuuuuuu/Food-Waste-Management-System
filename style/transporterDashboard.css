@@ -1292,7 +1292,7 @@ footer {
 }
 
 .route-card {
-    opacity: 0;
+    opacity: 1;
 }
 
 .route-card.animate-in {

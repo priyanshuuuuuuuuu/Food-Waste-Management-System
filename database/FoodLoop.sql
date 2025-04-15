@@ -104,3 +104,33 @@ CREATE TABLE Pickup (
     FOREIGN KEY (listing_id) REFERENCES listing(listing_id),
     FOREIGN KEY (request_id) REFERENCES waste_request(request_id)
 );
+
+CREATE TABLE Notification (
+    notification_id INT PRIMARY KEY AUTO_INCREMENT,
+    read_status BOOLEAN NOT NULL DEFAULT FALSE,
+    message TEXT NOT NULL,
+    sender_id INT,
+    FOREIGN KEY (sender_id) REFERENCES User(user_id) ON DELETE SET NULL
+);
+
+CREATE TABLE NotificationReceiver (
+    notification_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    PRIMARY KEY (notification_id, receiver_id),
+    FOREIGN KEY (notification_id) REFERENCES Notification(notification_id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES User(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE Special_Request (
+    request_id INT AUTO_INCREMENT PRIMARY KEY,
+    company_id INT NOT NULL,
+    waste_type VARCHAR(100) NOT NULL,
+    quantity_required DECIMAL(10,2) NOT NULL,
+    delivery_timeframe VARCHAR(50),
+    special_notes TEXT,
+    request_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (company_id) REFERENCES Company(company_id)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE
+);

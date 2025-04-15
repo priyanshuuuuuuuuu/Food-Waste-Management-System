@@ -244,62 +244,20 @@
                     </div>
                     <div class="orders-table">
                         <table>
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th>
-                                    <th>Provider</th>
-                                    <th>Waste Type</th>
-                                    <th>Quantity</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>#ORD-2305</td>
-                                    <td>Green Canteen</td>
-                                    <td>Organic Waste</td>
-                                    <td>120 kg</td>
-                                    <td><span class="status-badge delivered">Delivered</span></td>
-                                    <td><button class="action-btn">Details</button></td>
-                                </tr>
-                                <tr>
-                                    <td>#ORD-2304</td>
-                                    <td>Royal Hotel</td>
-                                    <td>Mixed Waste</td>
-                                    <td>200 kg</td>
-                                    <td><span class="status-badge in-transit">In Transit</span></td>
-                                    <td><button class="action-btn">Track</button></td>
-                                </tr>
-                                <tr>
-                                    <td>#ORD-2303</td>
-                                    <td>Campus Dining</td>
-                                    <td>Vegetable Scraps</td>
-                                    <td>150 kg</td>
-                                    <td><span class="status-badge processing">Processing</span></td>
-                                    <td><button class="action-btn">Details</button></td>
-                                </tr>
-                                <tr>
-                                    <td>#ORD-2302</td>
-                                    <td>Green Canteen</td>
-                                    <td>Organic Waste</td>
-                                    <td>100 kg</td>
-                                    <td><span class="status-badge delivered">Delivered</span></td>
-                                    <td><button class="action-btn">Details</button></td>
-                                </tr>
-                                <tr>
-                                    <td>#ORD-2301</td>
-                                    <td>Royal Hotel</td>
-                                    <td>Used Oil</td>
-                                    <td>50 kg</td>
-                                    <td><span class="status-badge delayed">Delayed</span></td>
-                                    <td><button class="action-btn">Track</button></td>
-                                </tr>
-                            </tbody>
+                        <thead>
+                            <tr>
+                            <th>Order ID</th>
+                            <th>Provider</th>
+                            <th>Waste Type</th>
+                            <th>Quantity</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-body"></tbody>
                         </table>
                     </div>
-                </div>
-                
+                    </div>
                 <div class="grid-item special-requests">
                     <div class="section-header">
                         <h2>Special Requests</h2>
@@ -427,6 +385,36 @@
             }
         });
 
+        function loadRecentOrders(companyId) {
+            fetch(`http://localhost:3000/api/recent-orders?company_id=${companyId}`)
+                .then(res => res.json())
+                .then(data => {
+                const tbody = document.getElementById('orders-body');
+                tbody.innerHTML = '';
+                data.forEach(order => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                    <td>#ORD-${order.order_id}</td>
+                    <td>${order.provider_name}</td>
+                    <td>${order.foodtype}</td>
+                    <td>${order.quantity}</td>
+                    <td><span class="status-badge ${getStatusClass(order.status)}">${order.status}</span></td>
+                    <td><button class="action-btn">Details</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            });
+        }
+
+        function getStatusClass(status) {
+            switch (status) {
+                case 'Completed': return 'delivered';
+                case 'Pickup Scheduled': return 'in-transit';
+                case 'requested': return 'processing';
+                default: return '';
+            }
+        }
+
         // Animation on scroll
         document.addEventListener('DOMContentLoaded', function() {
             const elements = document.querySelectorAll('.grid-item, .stat-card, .provider-card');
@@ -442,6 +430,15 @@
             elements.forEach(element => {
                 observer.observe(element);
             });
+
+            const user = JSON.parse(localStorage.getItem('user'));
+            const company_id = user.company_id;
+
+            if(!company_id) {
+                alert('Company ID not found. Please log in again.');
+                return;
+            }
+            loadRecentOrders(company_id); // Load recent orders on page load
         });
 
         // Notifications dropdown functionality
@@ -469,7 +466,7 @@
             notificationCount.textContent = '0';
             notificationCount.style.display = 'none';
         });
-        
+
         // Individual notification actions
         document.querySelectorAll('.notification-action').forEach(button => {
             button.addEventListener('click', function(e) {
@@ -509,6 +506,7 @@
                 }
 
                 const companyId = user.company_id; // Ensure company_id is stored in localStorage
+                const user_id = user.user_id;
 
                 if (!companyId) {
                     alert('Company ID not found. Please log in again.');
@@ -521,12 +519,13 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ companyId, listingId }),
+                    body: JSON.stringify({ companyId, listingId, user_id }),
                 });
 
                 const result = await response.json();
 
                 if (response.ok) {
+                    loadRecentOrders(companyId); // Reload recent orders after request
                     alert('Waste request submitted successfully!');
                 } else {
                     alert(`Failed to submit request: ${result.message}`);
@@ -619,6 +618,55 @@
                 console.error('Error parsing user data from localStorage:', error);
             }
         });
+
+        document.querySelector('.submit-request-btn').addEventListener('click', function () {
+            const wasteType = document.getElementById('wasteType').value;
+            const quantity = document.getElementById('quantity').value;
+            const timeframe = document.getElementById('timeframe').value;
+            const notes = document.getElementById('notes').value;
+            const user = JSON.parse(localStorage.getItem('user'));
+            const companyId = user.company_id;
+
+            // Basic validation (optional)
+            if (!wasteType || !quantity || !timeframe) {
+                alert("Please fill in all required fields.");
+                return;
+            }
+
+            const requestData = {
+                company_id: companyId,
+                waste_type: wasteType,
+                quantity_required: quantity,
+                delivery_timeframe: timeframe,
+                special_notes: notes
+            };
+
+            fetch('http://localhost:3000/api/special-request', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+            })
+            .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to submit request.");
+            }
+            return response.json();
+            })
+            .then(data => {
+            alert("Special request submitted successfully!");
+            // Optionally clear form
+            document.getElementById('wasteType').value = "";
+            document.getElementById('quantity').value = "";
+            document.getElementById('timeframe').value = "";
+            document.getElementById('notes').value = "";
+            })
+            .catch(error => {
+            console.error(error);
+            alert("There was an error submitting your request.");
+        });
+    });
     </script>
 </body>
 </html>

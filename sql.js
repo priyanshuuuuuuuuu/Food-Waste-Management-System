@@ -6,7 +6,6 @@ const bcrypt = require('bcrypt');
 const cors = require('cors');
 const saltRounds = 10;
 
-
 const app = express();
 app.use(cors());
 const port = 3000;
@@ -18,7 +17,7 @@ app.use(express.static(__dirname));
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'Priyanshu123@',
+    password: 'Tiwari@142',
     database: 'FoodLoop'
 });
 
@@ -672,23 +671,258 @@ app.get('/api/activeprovidercards', (req, res) => {
 
 // API endpoint to handle waste requests
 app.post('/api/requestWaste', (req, res) => {
-    const { companyId, listingId } = req.body;
+    console.log('Received request body:', req.body);
+    const { companyId, listingId, user_id } = req.body;
 
     if (!companyId || !listingId) {
         return res.status(400).json({ message: 'Company ID and Listing ID are required' });
     }
 
-    const query = `
-        INSERT INTO waste_request (company_id, listing_id, status)
-        VALUES (?, ?, 'requested')
+    // Step 1: Fetch listing's foodtype and provider_id
+    const listingQuery = `
+        SELECT foodtype, provider_id 
+        FROM Listing 
+        WHERE listing_id = ?
     `;
 
-    db.query(query, [companyId, listingId], (err, result) => {
-        if (err) {
-            console.error('Error inserting waste request:', err);
-            return res.status(500).json({ message: 'Failed to submit waste request' });
+    db.query(listingQuery, [listingId], (err, listingResults) => {
+        if (err || listingResults.length === 0) {
+            console.error('Error fetching listing:', err);
+            return res.status(500).json({ message: 'Failed to fetch listing details' });
         }
 
-        res.status(200).json({ message: 'Waste request submitted successfully' });
+        const { foodtype, provider_id } = listingResults[0];
+        console.log("Food Type:", foodtype);
+        console.log("Provider ID:", provider_id);
+        console.log("Company ID:", companyId);
+
+        // Step 2: Get company name
+        db.query('SELECT name FROM User WHERE user_id = ?', [user_id], (err, companyResults) => {
+            if (err || companyResults.length === 0) {
+                console.error('Error fetching company name:', err);
+                return res.status(500).json({ message: 'Failed to fetch company name' });
+            }
+
+            const companyName = companyResults[0].name;
+            console.log(companyName);
+            const message = `${companyName} is interested in your ${foodtype} listing.`;
+
+            // Step 3: Insert into Notification
+            const insertNotificationQuery = `
+                INSERT INTO Notification (message, sender_id)
+                VALUES (?, ?)
+            `;
+
+            db.query(insertNotificationQuery, [message, user_id], (err, notificationResult) => {
+                if (err) {
+                    console.error('Error inserting notification:', err);
+                    return res.status(500).json({ message: 'Failed to insert notification' });
+                }
+
+                const notificationId = notificationResult.insertId;
+
+                // Step 4: Insert into NotificationReceiver
+                const insertReceiverQuery = `
+                    INSERT INTO NotificationReceiver (notification_id, receiver_id)
+                    VALUES (?, ?)
+                `;
+
+                db.query(insertReceiverQuery, [notificationId, provider_id], (err) => {
+                    if (err) {
+                        console.error('Error inserting notification receiver:', err);
+                        return res.status(500).json({ message: 'Failed to insert notification receiver' });
+                    }
+
+                    // Step 5: Insert into waste_request
+                    const insertWasteRequest = `
+                        INSERT INTO waste_request (company_id, listing_id, status)
+                        VALUES (?, ?, 'requested')
+                    `;
+
+                    db.query(insertWasteRequest, [companyId, listingId], (err) => {
+                        if (err) {
+                            console.error('Error inserting waste request:', err);
+                            return res.status(500).json({ message: 'Failed to submit waste request' });
+                        }
+
+                        res.status(200).json({ message: 'Waste request and notification submitted successfully' });
+                    });
+                });
+            });
+        });
+    });
+});
+
+
+app.get('/api/recent-orders', (req, res) => {
+    console.log('Received request for recent orders:', req.query.company_id);
+    const companyId = req.query.company_id;
+
+    const sql = `
+        SELECT
+            wr.request_id AS order_id,
+            u.name AS provider_name,
+            l.foodtype,
+            l.quantity,
+            wr.status
+        FROM waste_request wr
+        JOIN Listing l ON wr.listing_id = l.listing_id
+        JOIN Provider p ON l.provider_id = p.provider_id
+        JOIN User u ON p.user_id = u.user_id
+        WHERE wr.company_id = ?
+        ORDER BY wr.request_id DESC;
+    `;
+
+    db.query(sql, [companyId], (err, results) => {
+        if (err) {
+            console.error("Error fetching recent orders:", err);
+            return res.status(500).json({ error: "Failed to fetch recent orders" });
+        }
+        res.json(results);
+    });
+});
+
+app.post('/api/special-request', (req, res) => {
+    const {
+      company_id,
+      waste_type,
+      quantity_required,
+      delivery_timeframe,
+      special_notes
+    } = req.body;
+  
+    const sql = `
+      INSERT INTO Special_Request (
+        company_id, waste_type, quantity_required, delivery_timeframe, special_notes
+      ) VALUES (?, ?, ?, ?, ?)
+    `;
+  
+    db.query(sql, [company_id, waste_type, quantity_required, delivery_timeframe, special_notes], (err, result) => {
+      if (err) {
+        console.error("Error inserting request:", err);
+        return res.status(500).json({ message: "Internal Server Error" });
+      }
+      res.status(201).json({ message: "Request submitted successfully", request_id: result.insertId });
+    });
+  });
+
+  // 1. Get upcoming pickups for a transporter based on user_id
+app.get('/api/upcoming-pickups', (req, res) => {
+    console.log('Received request for upcoming pickups:', req.query.user_id);
+    const userId = req.query.user_id;
+  
+    const query = `
+      SELECT
+        CONCAT('#PK-', p.pickup_id) AS pickup_code,
+        u.name AS provider_name,
+        CONCAT(DATE_FORMAT(p.pickup_date, '%d %b %Y'), ', ', TIME_FORMAT(p.pickup_time, '%h:%i %p')) AS pickup_time,
+        l.foodtype AS waste_type,
+        CONCAT(p.total_weight, ' kg') AS quantity,
+        p.status
+      FROM Pickup p
+      JOIN Provider pr ON p.provider_id = pr.provider_id
+      JOIN User u ON pr.user_id = u.user_id
+      JOIN Listing l ON p.listing_id = l.listing_id
+      WHERE p.transporter_id = (
+        SELECT transporter_id FROM Transporter WHERE user_id = ?
+      )
+      ORDER BY p.pickup_date ASC, p.pickup_time ASC
+      LIMIT 5;
+    `;
+  
+    db.query(query, [userId], (err, results) => {
+      if (err) {
+        console.error('Error fetching upcoming pickups:', err);
+        return res.status(500).json({ error: 'Database error' });
+      }
+      console.log('Upcoming pickups:', results);
+      res.json(results);
+    })
+});
+
+app.get('/api/scheduled-pickups/user/:user_id', (req, res) => {
+    console.log("INTO IT");
+    console.log('Received request for scheduled pickups:', req.params.user_id);
+
+    const userId = req.params.user_id;
+
+    const getTransporterIdQuery = `
+        SELECT transporter_id FROM Transporter WHERE user_id = ?
+    `;
+
+    db.query(getTransporterIdQuery, [userId], (err, transporterResult) => {
+    if (err) {
+        console.error('Error fetching transporter_id:', err);
+        return res.status(500).json({ error: 'Database error while fetching transporter_id' });
+    }
+
+    if (transporterResult.length === 0) {
+        return res.status(404).json({ error: 'Transporter not found for given user_id' });
+    }
+
+    const transporterId = transporterResult[0].transporter_id;
+
+    const pickupQuery = `
+        SELECT
+            p.pickup_id AS pickup_id,
+            CONCAT('RT-', LPAD(p.pickup_id, 4, '0')) AS route_code,
+            u_provider.address AS provider_address,
+            u_transporter.address AS transporter_address,
+            u_company.address AS company_address,
+            TIME_FORMAT(p.pickup_time, '%h:%i %p') AS pickup_time,
+            l.quantity AS total_weight,
+            p.distance,
+            p.status
+        FROM Pickup p
+        JOIN Provider pr ON p.provider_id = pr.provider_id
+        JOIN User u_provider ON pr.user_id = u_provider.user_id
+        JOIN Transporter t ON p.transporter_id = t.transporter_id
+        JOIN User u_transporter ON t.user_id = u_transporter.user_id
+        JOIN Company c ON p.company_id = c.company_id
+        JOIN User u_company ON c.user_id = u_company.user_id
+        JOIN Listing l ON p.listing_id = l.listing_id
+        WHERE p.transporter_id = ? AND p.status IN ('Scheduled', 'In Progress')
+        ORDER BY 
+            CASE 
+                WHEN p.status = 'In Progress' THEN 0
+                WHEN p.status = 'Scheduled' THEN 1
+                ELSE 2
+            END,
+            p.pickup_date DESC,
+            p.pickup_time DESC
+
+        `;
+
+    db.query(pickupQuery, [transporterId], (err, results) => {
+      if (err) {
+        console.error('Error fetching pickups:', err);
+        return res.status(500).json({ error: 'Database error while fetching pickups' });
+      }
+
+      res.json(results);
+    });
+  });
+});
+
+app.post('/api/start-route/:pickupId', (req, res) => {
+    const pickupId = req.params.pickupId;
+    const newStatus = req.body.newStatus;
+
+    console.log("Starting route for Pickup ID:", pickupId);
+    console.log("Updating status to:", newStatus);
+
+    const updateQuery = `
+        UPDATE Pickup
+        SET status = ?
+        WHERE pickup_id = ?
+    `;
+
+    db.query(updateQuery, [newStatus, pickupId], (err, result) => {
+        if (err) {
+            console.error('Error updating route status:', err);
+            return res.status(500).json({ error: 'Database error while updating route status' });
+        }
+
+        res.json({ message: 'Route status updated successfully!' });
     });
 });

@@ -108,7 +108,7 @@
                         <i class="fas fa-route"></i>
                     </div>
                     <div class="stat-info">
-                        <h3>4</h3>
+                        <h3 id = "today-routes">4</h3>
                         <p>Today's Routes</p>
                     </div>
                 </div>
@@ -117,7 +117,7 @@
                         <i class="fas fa-box"></i>
                     </div>
                     <div class="stat-info">
-                        <h3>12</h3>
+                        <h3 id = "pending-pickups">12</h3>
                         <p>Pending Pickups</p>
                     </div>
                 </div>
@@ -277,7 +277,7 @@
                 
                 <div class="grid-item upcoming-pickups">
                     <div class="section-header">
-                        <h2>Upcoming Pickups</h2>
+                        <h2>Pickups</h2>
                         <button class="view-all-btn">View All <i class="fas fa-arrow-right"></i></button>
                     </div>
                     <div class="pickup-list">
@@ -293,46 +293,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>#PK-4201</td>
-                                    <td>Royal Hotel</td>
-                                    <td>Today, 11:30 AM</td>
-                                    <td>Mixed Waste</td>
-                                    <td>85 kg</td>
-                                    <td><span class="status-badge current">Current</span></td>
-                                </tr>
-                                <tr>
-                                    <td>#PK-4202</td>
-                                    <td>Campus Dining</td>
-                                    <td>Today, 2:00 PM</td>
-                                    <td>Vegetable Scraps</td>
-                                    <td>110 kg</td>
-                                    <td><span class="status-badge upcoming">Upcoming</span></td>
-                                </tr>
-                                <tr>
-                                    <td>#PK-4203</td>
-                                    <td>City Hospital Cafeteria</td>
-                                    <td>Today, 3:30 PM</td>
-                                    <td>Mixed Food Waste</td>
-                                    <td>100 kg</td>
-                                    <td><span class="status-badge upcoming">Upcoming</span></td>
-                                </tr>
-                                <tr>
-                                    <td>#PK-4204</td>
-                                    <td>Palace Restaurant</td>
-                                    <td>Today, 6:00 PM</td>
-                                    <td>Used Cooking Oil</td>
-                                    <td>75 kg</td>
-                                    <td><span class="status-badge upcoming">Upcoming</span></td>
-                                </tr>
-                                <tr>
-                                    <td>#PK-4205</td>
-                                    <td>Grand Banquet Hall</td>
-                                    <td>Today, 7:15 PM</td>
-                                    <td>Mixed Food Waste</td>
-                                    <td>90 kg</td>
-                                    <td><span class="status-badge upcoming">Upcoming</span></td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -598,6 +558,8 @@
                     // Update the transporter name in the DOM
                     document.querySelector('.welcome-text h1').textContent = `Welcome, ${user.name}!`;
                     document.querySelector('.profile-dropdown span').textContent = user.name;
+                    loadUpcomingPickups(user.user_id);
+                    loadScheduledPickups();
                 } else {
                     console.error('User data not found in localStorage');
                 }
@@ -605,6 +567,185 @@
                 console.error('Error parsing user data from localStorage:', error);
             }
         });
+
+        function loadUpcomingPickups(userId) {
+            fetch(`http://localhost:3000/api/upcoming-pickups?user_id=${userId}`)
+            .then(res => res.json())
+            .then(data => {
+            const tbody = document.querySelector('.pickup-list tbody');
+            tbody.innerHTML = '';
+
+            data.forEach(row => {
+                tbody.innerHTML += `
+                <tr>
+                    <td>${row.pickup_code}</td>
+                    <td>${row.provider_name}</td>
+                    <td>${row.pickup_time}</td>
+                    <td>${row.waste_type}</td>
+                    <td>${row.quantity}</td>
+                    <td><span class="status-badge ${row.status.toLowerCase()}">${row.status}</span></td>
+                </tr>
+                `;
+            });
+            })
+            .catch(err => console.error('Error loading table:', err));
+        }
+
+        function loadScheduledPickups() {
+            let pending = 0;
+            let current = 0;
+            const user = JSON.parse(localStorage.getItem('user'));
+            fetch(`http://localhost:3000/api/scheduled-pickups/user/${user.user_id}`)
+            .then(response => response.json())
+            .then(data => {
+                const container = document.querySelector('.routes-container');
+                container.innerHTML = ''; // Clear existing cards
+
+                data.forEach((pickup) => {
+                    const card = document.createElement('div');
+                    const isInProgress = pickup.status === "In Progress";
+
+                    card.className = `route-card ${isInProgress ? 'active' : ''}`;
+
+                    if (isInProgress) {
+                        current++;
+                        // In Progress card structure
+                        card.innerHTML = `
+                        <div class="route-header">
+                            <div class="route-id">Route #${pickup.route_code}</div>
+                            <span class="route-status ongoing">In Progress</span>
+                        </div>
+                        <div class="route-body">
+                            <div class="route-points">
+                                <div class="route-point">
+                                    <i class="fas fa-circle start"></i>
+                                    <div class="point-details">
+                                        <h4>${pickup.provider_address}</h4>
+                                        <p>Pickup: ${pickup.pickup_time} (Completed)</p>
+                                    </div>
+                                </div>
+                                <div class="route-point">
+                                    <i class="fas fa-circle current"></i>
+                                    <div class="point-details">
+                                        <h4>${pickup.transporter_address}</h4>
+                                        <p>Pickup: ${pickup.pickup_time} (Current)</p>
+                                    </div>
+                                </div>
+                                <div class="route-point">
+                                    <i class="fas fa-circle end"></i>
+                                    <div class="point-details">
+                                        <h4>${pickup.company_address}</h4>
+                                        <p>Delivery: ${pickup.pickup_time} (Pending)</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="route-summary">
+                                <p><i class="fas fa-weight"></i> Total Weight: ${pickup.total_weight}</p>
+                                <p><i class="fas fa-clock"></i> Est. Time: 3 hours</p>
+                                <p><i class="fas fa-road"></i> Distance: ${pickup.distance} km</p>
+                            </div>
+                        </div>
+                        <div class="route-actions">
+                            <button class="navigation-btn"><i class="fas fa-map-marker-alt"></i> Navigate</button>
+                            <button class="update-btn"><i class="fas fa-sync-alt"></i> Update Status</button>
+                        </div>
+                        `;
+                    } else {
+                        pending++;
+                        // Scheduled card structure
+                        card.innerHTML = `
+                        <div class="route-header">
+                            <div class="route-id">Route #${pickup.route_code}</div>
+                            <span class="route-status pending">${pickup.status}</span>
+                        </div>
+                        <div class="route-body">
+                            <div class="route-points">
+                                <div class="route-point">
+                                    <i class="fas fa-circle"></i>
+                                    <div class="point-details">
+                                        <h4>${pickup.provider_address}</h4>
+                                        <p>Pickup: ${pickup.pickup_time}</p>
+                                    </div>
+                                </div>
+                                <div class="route-point">
+                                    <i class="fas fa-circle"></i>
+                                    <div class="point-details">
+                                        <h4>${pickup.transporter_address}</h4>
+                                        <p>Pickup: ${pickup.pickup_time}</p>
+                                    </div>
+                                </div>
+                                <div class="route-point">
+                                    <i class="fas fa-circle"></i>
+                                    <div class="point-details">
+                                        <h4>${pickup.company_address}</h4>
+                                        <p>Delivery: ${pickup.pickup_time}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="route-summary">
+                                <p><i class="fas fa-weight"></i> Total Weight: ${pickup.total_weight}</p>
+                                <p><i class="fas fa-clock"></i> Est. Time: 3.5 hours</p>
+                                <p><i class="fas fa-road"></i> Distance: ${pickup.distance} km</p>
+                            </div>
+                        </div>
+                        <div class="route-actions">
+                            <button class="start-btn"><i class="fas fa-play"></i> Start Route</button>
+                            <button class="details-btn"><i class="fas fa-info-circle"></i> Details</button>
+                        </div>
+                        `;
+                    }
+
+                    container.appendChild(card);
+
+                    // Add event listeners based on card type
+                    if (!isInProgress) {
+                        const startButton = card.querySelector('.start-btn');
+                        startButton.addEventListener('click', () => {
+                            UpdateStatus(pickup.pickup_id, "In Progress");
+                        });
+                    } else {
+                        const updateButton = card.querySelector('.update-btn');
+                        updateButton.addEventListener('click', () => {
+                            UpdateStatus(pickup.pickup_id, "Completed");
+                        });
+                    }
+                })
+                    const todayRoutes = document.getElementById('today-routes');
+                    const pendingPickups = document.getElementById('pending-pickups');
+                    todayRoutes.textContent = current;
+                    pendingPickups.textContent = pending;
+                ;
+            })
+            .catch(err => {
+                console.error('Error loading scheduled pickups:', err);
+            });
+        }
+
+
+        function UpdateStatus(pickupId, newStatus) {
+            alert("Done");
+            fetch(`http://localhost:3000/api/start-route/${pickupId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ newStatus: newStatus })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to start route');
+                return response.json();
+            })
+            .then(data => {
+                console.log(data.message);
+                alert(`Route started successfully!`);
+                loadScheduledPickups();
+            })
+            .catch(err => {
+                console.error('Error starting route:', err);
+                alert('Failed to start route.');
+            });
+        }
+
     </script>
 </body>
 </html>
