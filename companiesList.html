@@ -1,148 +1,108 @@
-<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Companies List | FoodLoop</title>
-    <link rel="stylesheet" href="style/adminportal.css">
-    <link rel="stylesheet" href="style/adminDashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Food Listings | FoodLoop</title>
+  <link rel="stylesheet" href="style/adminportal.css" />
+  <link rel="stylesheet" href="style/adminDashboard.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    .companies-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      padding: 20px 0;
+    }
+
+    .company-card {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: 0.3s ease;
+    }
+
+    .company-img img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .company-info {
+      padding: 15px;
+    }
+
+    .company-tags {
+      margin-top: 10px;
+    }
+
+    .tag {
+      display: inline-block;
+      background-color: #e0e0e0;
+      border-radius: 20px;
+      padding: 5px 10px;
+      font-size: 0.85rem;
+      margin: 2px;
+    }
+  </style>
 </head>
 <body>
-    <div class="dashboard-container">
-        
-        <main class="main-content">
-            <header class="page-header">
-                <div class="logo">FoodLoop</div>
-                <nav>
-                    <a href="adminDashboard.html">Back to Dashboard</a>
-                </nav>
-            </header>
+  <div class="dashboard-container">
+    <main class="main-content">
+      <header class="page-header">
+        <div class="logo">FoodLoop</div>
+        <nav>
+          <a href="adminDashboard.html">Back to Dashboard</a>
+        </nav>
+      </header>
 
-            <section class="companies-container">
-                <h1>Waste Processors</h1>
-                <div class="companies-list">
-                    <div class="company-card">
-                        <div class="company-img">
-                            <img src="Assets/Images/company1.jpg" alt="EcoGreen Solutions">
-                        </div>
-                        <div class="company-info">
-                            <h3>EcoGreen Solutions</h3>
-                            <p><i class="fas fa-map-marker-alt"></i> Mumbai, Maharashtra</p>
-                            <div class="company-tags">
-                                <span class="tag">Biogas Production</span>
-                                <span class="tag">Rating: 4.5</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="company-card">
-                        <div class="company-img">
-                            <img src="Assets/Images/company2.jpg" alt="GreenCompost Ltd">
-                        </div>
-                        <div class="company-info">
-                            <h3>GreenCompost Ltd</h3>
-                            <p><i class="fas fa-map-marker-alt"></i> Pune, Maharashtra</p>
-                            <div class="company-tags">
-                                <span class="tag">Composting</span>
-                                <span class="tag">Rating: 4.2</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="company-card">
-                        <div class="company-img">
-                            <img src="Assets/Images/company3.jpg" alt="BioFuel Corp">
-                        </div>
-                        <div class="company-info">
-                            <h3>BioFuel Corp</h3>
-                            <p><i class="fas fa-map-marker-alt"></i> Bengaluru, Karnataka</p>
-                            <div class="company-tags">
-                                <span class="tag">Biofuel Production</span>
-                                <span class="tag">Rating: 4.8</span>
-                            </div>
-                        </div>
-                    </div>
+      <section class="companies-container">
+        <h1>Food Listings</h1>
+        <div class="companies-list" id="listing-container">
+          <!-- JS will inject listings here -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <p>&copy; 2023 FoodLoop. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('http://localhost:3000/api/listings') // Adjust endpoint
+        .then(response => response.json())
+        .then(listings => {
+          const container = document.getElementById('listing-container');
+          container.innerHTML = '';
+
+          listings.forEach((listing, index) => {
+            const card = document.createElement('div');
+            card.className = 'company-card';
+            card.innerHTML = `
+              <div class="company-img">
+                <img src="Assets/Images/food${index + 1}.jpg" alt="${listing.foodtype}">
+              </div>
+              <div class="company-info">
+                <h3>${listing.foodtype}</h3>
+                <p><strong>Quantity:</strong> ${listing.quantity}</p>
+                <p><strong>Listed on:</strong> ${listing.listed_date}</p>
+                <p><strong>Best before:</strong> ${listing.best_before}</p>
+                <div class="company-tags">
+                  <span class="tag">Interest: ${listing.num_of_interest_companies}</span>
+                  <span class="tag">${listing.status}</span>
                 </div>
-            </section>
-        </main>
-    </div>
-
-    <footer>
-        <p>&copy; 2023 FoodLoop. All rights reserved.</p>
-    </footer>
+              </div>
+            `;
+            container.appendChild(card);
+          });
+        })
+        .catch(error => {
+          console.error('Failed to fetch listings:', error);
+        });
+    });
+  </script>
 </body>
-=======
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Companies List | FoodLoop</title>
-    <link rel="stylesheet" href="style/adminportal.css">
-    <link rel="stylesheet" href="style/adminDashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <div class="dashboard-container">
-        
-        <main class="main-content">
-            <header class="page-header">
-                <div class="logo">FoodLoop</div>
-                <nav>
-                    <a href="adminDashboard.html">Back to Dashboard</a>
-                </nav>
-            </header>
-
-            <section class="companies-container">
-                <h1>Waste Processors</h1>
-                <div class="companies-list">
-                    <div class="company-card">
-                        <div class="company-img">
-                            <img src="Assets/Images/company1.jpg" alt="EcoGreen Solutions">
-                        </div>
-                        <div class="company-info">
-                            <h3>EcoGreen Solutions</h3>
-                            <p><i class="fas fa-map-marker-alt"></i> Mumbai, Maharashtra</p>
-                            <div class="company-tags">
-                                <span class="tag">Biogas Production</span>
-                                <span class="tag">Rating: 4.5</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="company-card">
-                        <div class="company-img">
-                            <img src="Assets/Images/company2.jpg" alt="GreenCompost Ltd">
-                        </div>
-                        <div class="company-info">
-                            <h3>GreenCompost Ltd</h3>
-                            <p><i class="fas fa-map-marker-alt"></i> Pune, Maharashtra</p>
-                            <div class="company-tags">
-                                <span class="tag">Composting</span>
-                                <span class="tag">Rating: 4.2</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="company-card">
-                        <div class="company-img">
-                            <img src="Assets/Images/company3.jpg" alt="BioFuel Corp">
-                        </div>
-                        <div class="company-info">
-                            <h3>BioFuel Corp</h3>
-                            <p><i class="fas fa-map-marker-alt"></i> Bengaluru, Karnataka</p>
-                            <div class="company-tags">
-                                <span class="tag">Biofuel Production</span>
-                                <span class="tag">Rating: 4.8</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <footer>
-        <p>&copy; 2023 FoodLoop. All rights reserved.</p>
-    </footer>
-</body>
->>>>>>> ace2edee0b7d120cc5747ec912dc7311d326eb1d
 </html>
