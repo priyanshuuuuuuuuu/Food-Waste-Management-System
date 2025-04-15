@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style/providerDashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -20,73 +21,14 @@
         <div class="nav-profile">
             <div class="notifications">
                 <i class="fas fa-bell"></i>
-                <span class="notification-count">5</span>
-                <div class="notifications-dropdown">
+                <span class="notification-count" id="notificationCount">0</span>
+                <div class="notifications-dropdown" id="notificationsDropdown">
                     <div class="notifications-header">
                         <h3>Notifications</h3>
-                        <button class="mark-all-read">Mark all as read</button>
+                        <button class="mark-all-read" id="markAllRead">Mark all as read</button>
                     </div>
-                    <div class="notifications-list">
-                        <div class="notification-item unread">
-                            <div class="notification-icon request">
-                                <i class="fas fa-handshake"></i>
-                            </div>
-                            <div class="notification-content">
-                                <p class="notification-text"><strong>EcoProcess Ltd</strong> is interested in your Vegetable Scraps listing</p>
-                                <p class="notification-time">10 minutes ago</p>
-                            </div>
-                            <div class="notification-actions">
-                                <button class="notification-action"><i class="fas fa-eye"></i></button>
-                            </div>
-                        </div>
-                        <div class="notification-item unread">
-                            <div class="notification-icon pickup">
-                                <i class="fas fa-calendar-check"></i>
-                            </div>
-                            <div class="notification-content">
-                                <p class="notification-text">Pickup with <strong>BioFuel Inc</strong> confirmed for tomorrow at 1:00 PM</p>
-                                <p class="notification-time">1 hour ago</p>
-                            </div>
-                            <div class="notification-actions">
-                                <button class="notification-action"><i class="fas fa-eye"></i></button>
-                            </div>
-                        </div>
-                        <div class="notification-item unread">
-                            <div class="notification-icon rating">
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <div class="notification-content">
-                                <p class="notification-text"><strong>Green Composting Co.</strong> has rated your last listing 5 stars</p>
-                                <p class="notification-time">3 hours ago</p>
-                            </div>
-                            <div class="notification-actions">
-                                <button class="notification-action"><i class="fas fa-eye"></i></button>
-                            </div>
-                        </div>
-                        <div class="notification-item unread">
-                            <div class="notification-icon payment">
-                                <i class="fas fa-coins"></i>
-                            </div>
-                            <div class="notification-content">
-                                <p class="notification-text">You received a rebate of ₹250 for your last cooking oil collection</p>
-                                <p class="notification-time">Yesterday</p>
-                            </div>
-                            <div class="notification-actions">
-                                <button class="notification-action"><i class="fas fa-eye"></i></button>
-                            </div>
-                        </div>
-                        <div class="notification-item">
-                            <div class="notification-icon system">
-                                <i class="fas fa-cog"></i>
-                            </div>
-                            <div class="notification-content">
-                                <p class="notification-text">System update: New features added to your dashboard</p>
-                                <p class="notification-time">3 days ago</p>
-                            </div>
-                            <div class="notification-actions">
-                                <button class="notification-action"><i class="fas fa-trash-alt"></i></button>
-                            </div>
-                        </div>
+                    <div class="notifications-list" id="notificationsList">
+                        <!-- Notifications will be dynamically loaded here -->
                     </div>
                     <div class="notifications-footer">
                         <a href="#all-notifications">View all notifications</a>
@@ -614,6 +556,95 @@
             loadActiveListings();
         });
 
+        document.addEventListener('DOMContentLoaded', function () {
+            const notificationCountElement = document.getElementById('notificationCount');
+            const notificationsListElement = document.getElementById('notificationsList');
+            const markAllReadButton = document.getElementById('markAllRead');
+
+            // Fetch notifications from the server
+            async function fetchNotifications() {
+                try {
+                    const user = JSON.parse(localStorage.getItem('user'));
+                    const providerId = user?.provider_id;
+
+                    if (!providerId) {
+                        console.error('Provider ID not found. Please log in again.');
+                        alert('Provider ID not found. Please log in again.');
+                        window.location.href = 'LoginPage.html';
+                        return;
+                    }
+
+                    const response = await fetch(`http://localhost:3000/api/notifications?provider_id=${providerId}`);
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        updateNotifications(data.notifications);
+                    } else {
+                        console.error('Failed to fetch notifications:', data.message);
+                    }
+                } catch (error) {
+                    console.error('Error fetching notifications:', error);
+                }
+            }
+
+            // Update the notifications UI
+            function updateNotifications(notifications) {
+                notificationsListElement.innerHTML = '';
+                let unreadCount = 0;
+
+                notifications.forEach(notification => {
+                    const notificationItem = document.createElement('div');
+                    notificationItem.classList.add('notification-item');
+                    if (!notification.read_status) {
+                        notificationItem.classList.add('unread');
+                        unreadCount++;
+                    }
+
+                    notificationItem.innerHTML = `
+                        <div class="notification-icon">
+                            <i class="fas fa-industry"></i>
+                        </div>
+                        <div class="notification-content">
+                            <p class="notification-text">${notification.message}</p>
+                            <p class="notification-time">${new Date(notification.timestamp).toLocaleString()}</p>
+                        </div>
+                    `;
+
+                    notificationsListElement.appendChild(notificationItem);
+                });
+
+                notificationCountElement.textContent = unreadCount;
+                notificationCountElement.style.display = unreadCount > 0 ? 'block' : 'none';
+            }
+
+            // Mark all notifications as read
+            markAllReadButton.addEventListener('click', async function () {
+                try {
+                    const user = JSON.parse(localStorage.getItem('user'));
+                    const providerId = user?.provider_id;
+
+                    if (!providerId) {
+                        console.error('Provider ID not found. Please log in again.');
+                        return;
+                    }
+
+                    const response = await fetch(`http://localhost:3000/api/mark-notifications-read?provider_id=${providerId}`, {
+                        method: 'POST',
+                    });
+
+                    if (response.ok) {
+                        fetchNotifications(); // Refresh notifications
+                    } else {
+                        console.error('Failed to mark notifications as read.');
+                    }
+                } catch (error) {
+                    console.error('Error marking notifications as read:', error);
+                }
+            });
+
+            // Fetch notifications on page load
+            fetchNotifications();
+        });
     </script>
 </body>
 </html>

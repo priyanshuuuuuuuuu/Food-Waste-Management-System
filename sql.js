@@ -17,7 +17,7 @@ app.use(express.static(__dirname));
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'Tiwari@142',
+    password: 'Priyanshu123@',
     database: 'FoodLoop'
 });
 
@@ -270,14 +270,33 @@ app.post('/api/login', (req, res) => {
             return res.status(401).json({ error: "Invalid email or password" });
         }
 
-        // Redirect based on role
         let redirectUrl;
         let additionalData = {};
 
         switch (user.role) {
             case "FoodProvider":
                 redirectUrl = "providerDashboard.html";
-                break;
+
+                // Fetch provider_id for the logged-in provider
+                const providerQuery = `SELECT provider_id FROM Provider WHERE user_id = ?`;
+                db.query(providerQuery, [user.user_id], (err, providerResults) => {
+                    if (err) {
+                        console.error("Error fetching provider_id:", err);
+                        return res.status(500).json({ error: "Failed to fetch provider details" });
+                    }
+
+                    if (providerResults.length > 0) {
+                        additionalData.provider_id = providerResults[0].provider_id;
+                    }
+
+                    const { password: _, ...safeUser } = user;
+                    res.status(200).json({
+                        success: true,
+                        redirectUrl,
+                        user: { ...safeUser, ...additionalData }
+                    });
+                });
+                return; // Exit early for async query
             case "Transporter":
                 redirectUrl = "transporterDashboard.html";
                 break;
@@ -750,7 +769,6 @@ app.post('/api/requestWaste', (req, res) => {
                 });
             });
         });
-<<<<<<< HEAD
     });
 });
 
@@ -925,7 +943,55 @@ app.post('/api/start-route/:pickupId', (req, res) => {
         }
 
         res.json({ message: 'Route status updated successfully!' });
-=======
->>>>>>> ace2edee0b7d120cc5747ec912dc7311d326eb1d
+    });
+});
+
+// Fetch notifications for a provider
+app.get('/api/notifications', (req, res) => {
+    const providerId = req.query.provider_id;
+
+    if (!providerId) {
+        return res.status(400).json({ message: 'Provider ID is required' });
+    }
+
+    const query = `
+        SELECT n.notification_id, n.message, n.read_status
+        FROM Notification n
+        JOIN NotificationReceiver nr ON n.notification_id = nr.notification_id
+        WHERE nr.receiver_id = ?
+    `;
+
+    db.query(query, [providerId], (err, results) => {
+        if (err) {
+            console.error('Error fetching notifications:', err);
+            return res.status(500).json({ message: 'Failed to fetch notifications' });
+        }
+
+        res.json({ notifications: results });
+    });
+});
+
+// Mark all notifications as read for a provider
+app.post('/api/mark-notifications-read', (req, res) => {
+    const providerId = req.body.provider_id;
+
+    if (!providerId) {
+        return res.status(400).json({ message: 'Provider ID is required' });
+    }
+
+    const query = `
+        UPDATE Notification n
+        JOIN NotificationReceiver nr ON n.notification_id = nr.notification_id
+        SET n.read_status = TRUE
+        WHERE nr.receiver_id = ?
+    `;
+
+    db.query(query, [providerId], (err) => {
+        if (err) {
+            console.error('Error marking notifications as read:', err);
+            return res.status(500).json({ message: 'Failed to mark notifications as read' });
+        }
+
+        res.json({ message: 'Notifications marked as read' });
     });
 });
