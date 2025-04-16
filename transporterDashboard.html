@@ -553,6 +553,7 @@
             try {
                 // Retrieve the user data from localStorage
                 const user = JSON.parse(localStorage.getItem('user'));
+                console.log(user);
 
                 if (user && user.name) {
                     // Update the transporter name in the DOM

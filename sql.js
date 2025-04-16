@@ -17,7 +17,7 @@ app.use(express.static(__dirname));
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'Priyanshu123@',
+    password: 'Tiwari@142',
     database: 'FoodLoop'
 });
 
@@ -89,7 +89,7 @@ app.post('/api/registerProvider', async (req, res) => {
                 res.status(200).json({ 
                     success: true,
                     message: "Registration successful",
-                    redirectUrl: "providerDashboard.html"
+                    redirectUrl: "loginPage.html"
                 });
             });
         });
@@ -165,7 +165,7 @@ app.post('/api/registerTransporter', async (req, res) => {
                 res.status(200).json({
                     success: true,
                     message: "Transporter registration successful",
-                    redirectUrl: "transporterDashboard.html"
+                    redirectUrl: "loginPage.html"
                 });
             });
         });
@@ -239,7 +239,7 @@ app.post('/api/registerCompany', async (req, res) => {
                 res.status(200).json({
                     success: true,
                     message: "Company registration successful",
-                    redirectUrl: "companyDashboard.html"
+                    redirectUrl: "loginPage.html"
                 });
             });
         });

@@ -83,7 +83,7 @@ DBMS_Project/
 
 - **Frontend**: HTML, CSS, JavaScript
 - **Backend**: Node.js (API integration)
-- **Database**: MongoDB (or any other database for storing data)
+- **Database**: MySql (or any other database for storing data)
 - **Libraries**:
   - [Chart.js](https://www.chartjs.org/) for data visualization
   - [Font Awesome](https://fontawesome.com/) for icons
